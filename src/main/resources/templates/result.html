@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Calculation Result</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+<div class='container'>
+    <h2>Result:</h2>
+    <p class='result' th:text="${expr} + ' = ' + ${result}"></p>
+    <a href='/calculator' class='btn'>Back to calculator</a>
+</div>
+</body>
+</html>
