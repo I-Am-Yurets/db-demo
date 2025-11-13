@@ -1,8 +1,6 @@
 package dev.yurets.db_demo;
 
 import jakarta.annotation.PostConstruct;
-import net.objecthunter.exp4j.Expression;
-import net.objecthunter.exp4j.ExpressionBuilder;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -44,8 +42,8 @@ public class Application {
     @GetMapping("/calculate")
     public String calculate(@RequestParam String expr, Model model) {
         try {
-            Expression expression = new ExpressionBuilder(expr).build();
-            double result = expression.evaluate();
+            Calculator calculator = new Calculator(); // Використовуємо власний клас!
+            double result = calculator.calculate(expr);
 
             model.addAttribute("expr", expr);
             model.addAttribute("result", result);
