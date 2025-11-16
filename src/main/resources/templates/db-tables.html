@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Database Tables</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+<div class='crud-container' style="width: 650px;">
+    <h2 class="crud-title">Tables</h2>
+
+    <div style="margin-top: 30px;">
+        <a href="/tables/countries" class="btn-table-view">🌍 Countries</a>
+        <a href="/tables/periods" class="btn-table-view">📅 Aid Periods</a>
+        <a href="/tables/weapons" class="btn-table-view">🔫 Weapons</a>
+        <a href="/sql" class="btn-sql-editor">⚠️ SQL Query Editor (No Protection)</a>
+    </div>
+
+    <div style="margin-top: 40px;">
+        <a href="/database" class="btn-back">← Back to Database</a>
+    </div>
+</div>
+</body>
+</html>

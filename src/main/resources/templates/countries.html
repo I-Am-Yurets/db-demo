@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Countries Table</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+<div class='crud-container' style="width: 90%; max-width: 1000px;">
+    <h2 class="crud-title">🌍 Countries Table</h2>
+
+    <div th:if="${error}">
+        <p style="color: #ff6b6b;" th:text="${error}"></p>
+    </div>
+
+    <div th:unless="${error}" style="overflow-x: auto; margin-top: 25px;">
+        <table style="width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.03);">
+            <thead>
+            <tr style="background: linear-gradient(135deg, #0066ff, #00ccff);">
+                <th style="border: 1px solid rgba(255,255,255,0.1); padding: 14px; color: white; font-weight: 600; text-transform: uppercase;">ID</th>
+                <th style="border: 1px solid rgba(255,255,255,0.1); padding: 14px; color: white; font-weight: 600; text-transform: uppercase;">Country Name</th>
+                <th style="border: 1px solid rgba(255,255,255,0.1); padding: 14px; color: white; font-weight: 600; text-transform: uppercase;">Total Aid (USD)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="country : ${countries}" style="background: rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="border: 1px solid rgba(255,255,255,0.05); padding: 12px; color: #e0e0e0;" th:text="${country.id}"></td>
+                <td style="border: 1px solid rgba(255,255,255,0.05); padding: 12px; color: #e0e0e0;" th:text="${country.name}"></td>
+                <td style="border: 1px solid rgba(255,255,255,0.05); padding: 12px; color: #90ee90; font-weight: 500;" th:text="${#numbers.formatDecimal(country.total_aid_usd, 0, 'COMMA', 0, 'POINT')}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <p style="margin-top: 20px; font-weight: bold; color: #90ee90;">Total records: <span th:text="${countries.size()}"></span></p>
+    </div>
+
+    <p style="margin-top: 30px;">
+        <a href="/db-tables" class="btn-back">← Back to Tables</a>
+    </p>
+</div>
+</body>
+</html>

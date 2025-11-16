@@ -1,13 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Hello Page</title>
+    <title>Military Aid Database</title>
     <link rel="stylesheet" th:href="@{/styles.css}">
 </head>
 <body>
-<div class='container'>
-    <h2>Hello Docker World</h2>
-    <p><a href="/calculator" class="btn">Go to Calculator</a></p>
+<div class='crud-container' style="width: 450px;">
+    <h2 class='crud-title'>🎖️ Military Aid Database System</h2>
+    <p style="color: #bbb; margin-top: 15px;">Система обліку військової допомоги</p>
+
+    <div style="margin-top: 40px;">
+        <a href="/calculator" class="btn-table-view">🧮 Calculator</a>
+    </div>
+
+    <div style="margin-top: 15px;">
+        <a href="/database" class="btn-table-view" style="background: linear-gradient(135deg, #28a745, #20c997);">🗄️ Database</a>
+    </div>
 </div>
 </body>
 </html>

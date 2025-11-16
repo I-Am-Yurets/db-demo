@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Weapons Table</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+<div class='crud-container' style="width: 98%; max-width: 1300px;">
+    <h2 class="crud-title">🔫 Weapons Table</h2>
+
+    <div th:if="${error}">
+        <p style="color: #ff6b6b;" th:text="${error}"></p>
+    </div>
+
+    <div th:unless="${error}" style="overflow-x: auto; margin-top: 25px;">
+        <table style="width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.03); font-size: 14px;">
+            <thead>
+            <tr style="background: linear-gradient(135deg, #0066ff, #00ccff);">
+                <th style="border: 1px solid rgba(255,255,255,0.1); padding: 12px; color: white; font-weight: 600; text-transform: uppercase; font-size: 12px;">ID</th>
+                <th style="border: 1px solid rgba(255,255,255,0.1); padding: 12px; color: white; font-weight: 600; text-transform: uppercase; font-size: 12px;">Country</th>
+                <th style="border: 1px solid rgba(255,255,255,0.1); padding: 12px; color: white; font-weight: 600; text-transform: uppercase; font-size: 12px;">Period</th>
+                <th style="border: 1px solid rgba(255,255,255,0.1); padding: 12px; color: white; font-weight: 600; text-transform: uppercase; font-size: 12px;">Weapon Type</th>
+                <th style="border: 1px solid rgba(255,255,255,0.1); padding: 12px; color: white; font-weight: 600; text-transform: uppercase; font-size: 12px;">Weapon Name</th>
+                <th style="border: 1px solid rgba(255,255,255,0.1); padding: 12px; color: white; font-weight: 600; text-transform: uppercase; font-size: 12px;">Quantity</th>
+                <th style="border: 1px solid rgba(255,255,255,0.1); padding: 12px; color: white; font-weight: 600; text-transform: uppercase; font-size: 12px;">Unit Cost (USD)</th>
+                <th style="border: 1px solid rgba(255,255,255,0.1); padding: 12px; color: white; font-weight: 600; text-transform: uppercase; font-size: 12px;">Total Cost (USD)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="weapon : ${weapons}" style="background: rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="border: 1px solid rgba(255,255,255,0.05); padding: 10px; color: #e0e0e0;" th:text="${weapon.id}"></td>
+                <td style="border: 1px solid rgba(255,255,255,0.05); padding: 10px; color: #e0e0e0;" th:text="${weapon.country_name}"></td>
+                <td style="border: 1px solid rgba(255,255,255,0.05); padding: 10px; color: #e0e0e0;" th:text="${weapon.period_name}"></td>
+                <td style="border: 1px solid rgba(255,255,255,0.05); padding: 10px; color: #e0e0e0;" th:text="${weapon.weapon_type}"></td>
+                <td style="border: 1px solid rgba(255,255,255,0.05); padding: 10px; color: #e0e0e0;" th:text="${weapon.weapon_name}"></td>
+                <td style="border: 1px solid rgba(255,255,255,0.05); padding: 10px; color: #90ee90; font-weight: 500;" th:text="${weapon.quantity}"></td>
+                <td style="border: 1px solid rgba(255,255,255,0.05); padding: 10px; color: #e0e0e0;" th:text="${weapon.unit_cost_usd != null ? #numbers.formatDecimal(weapon.unit_cost_usd, 0, 'COMMA', 0, 'POINT') : '0'}"></td>
+                <td style="border: 1px solid rgba(255,255,255,0.05); padding: 10px; color: #90ee90; font-weight: 500;" th:text="${weapon.total_cost_usd != null ? #numbers.formatDecimal(weapon.total_cost_usd, 0, 'COMMA', 0, 'POINT') : '0'}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <p style="margin-top: 20px; font-weight: bold; color: #90ee90;">Total records: <span th:text="${weapons.size()}"></span></p>
+    </div>
+
+    <p style="margin-top: 30px;">
+        <a href="/db-tables" class="btn-back">← Back to Tables</a>
+    </p>
+</div>
+</body>
+</html>

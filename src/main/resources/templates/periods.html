@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Aid Periods Table</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+<div class='crud-container' style="width: 95%; max-width: 1200px;">
+    <h2 class="crud-title">📅 Aid Periods Table</h2>
+
+    <div th:if="${error}">
+        <p style="color: #ff6b6b;" th:text="${error}"></p>
+    </div>
+
+    <div th:unless="${error}" style="overflow-x: auto; margin-top: 25px;">
+        <table style="width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.03);">
+            <thead>
+            <tr style="background: linear-gradient(135deg, #0066ff, #00ccff);">
+                <th style="border: 1px solid rgba(255,255,255,0.1); padding: 14px; color: white; font-weight: 600; text-transform: uppercase;">ID</th>
+                <th style="border: 1px solid rgba(255,255,255,0.1); padding: 14px; color: white; font-weight: 600; text-transform: uppercase;">Country</th>
+                <th style="border: 1px solid rgba(255,255,255,0.1); padding: 14px; color: white; font-weight: 600; text-transform: uppercase;">Period Name</th>
+                <th style="border: 1px solid rgba(255,255,255,0.1); padding: 14px; color: white; font-weight: 600; text-transform: uppercase;">Start Date</th>
+                <th style="border: 1px solid rgba(255,255,255,0.1); padding: 14px; color: white; font-weight: 600; text-transform: uppercase;">End Date</th>
+                <th style="border: 1px solid rgba(255,255,255,0.1); padding: 14px; color: white; font-weight: 600; text-transform: uppercase;">Aid Amount (USD)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="period : ${periods}" style="background: rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="border: 1px solid rgba(255,255,255,0.05); padding: 12px; color: #e0e0e0;" th:text="${period.id}"></td>
+                <td style="border: 1px solid rgba(255,255,255,0.05); padding: 12px; color: #e0e0e0;" th:text="${period.country_name}"></td>
+                <td style="border: 1px solid rgba(255,255,255,0.05); padding: 12px; color: #e0e0e0;" th:text="${period.period_name}"></td>
+                <td style="border: 1px solid rgba(255,255,255,0.05); padding: 12px; color: #e0e0e0;" th:text="${period.start_date}"></td>
+                <td style="border: 1px solid rgba(255,255,255,0.05); padding: 12px; color: #e0e0e0;" th:text="${period.end_date ?: 'Ongoing'}"></td>
+                <td style="border: 1px solid rgba(255,255,255,0.05); padding: 12px; color: #90ee90; font-weight: 500;" th:text="${period.aid_amount_usd != null ? #numbers.formatDecimal(period.aid_amount_usd, 0, 'COMMA', 0, 'POINT') : '0'}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <p style="margin-top: 20px; font-weight: bold; color: #90ee90;">Total records: <span th:text="${periods.size()}"></span></p>
+    </div>
+
+    <p style="margin-top: 30px;">
+        <a href="/db-tables" class="btn-back">← Back to Tables</a>
+    </p>
+</div>
+</body>
+</html>

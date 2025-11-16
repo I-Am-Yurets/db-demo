@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>SQL Error</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+<div class='crud-container' style="width: 700px;">
+    <h2 class='crud-title' style="color: #ff6b6b;">❌ SQL Query Error</h2>
+
+    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; margin: 25px 0; border: 1px solid rgba(255,255,255,0.1);">
+        <strong style="color: #ffc107;">Query:</strong>
+        <pre style="margin-top: 15px; white-space: pre-wrap; word-wrap: break-word; color: #e0e0e0;
+                    background: rgba(0,0,0,0.3); padding: 15px; border-radius: 6px;
+                    font-family: 'Courier New', monospace; font-size: 13px;" th:text="${query}"></pre>
+    </div>
+
+    <div style="background: rgba(255, 107, 107, 0.15); padding: 20px; border-radius: 8px; border: 1px solid #ff6b6b;">
+        <strong style="color: #ff6b6b;">Error:</strong>
+        <p th:text="${error}" style="color: #ffb3b3; margin-top: 15px; word-wrap: break-word; line-height: 1.6;"></p>
+    </div>
+
+    <p style="margin-top: 35px;">
+        <a href="javascript:history.back()" class="crud-btn crud-btn-find" style="display: inline-block; padding: 12px 30px;">← Back</a>
+    </p>
+</div>
+</body>
+</html>

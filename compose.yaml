@@ -1,9 +1,9 @@
 services:
   postgres:
     image: postgres:17
-    container_name: lab1_postgres
+    container_name: military_aid_postgres
     environment:
-      POSTGRES_DB: lab1
+      POSTGRES_DB: military_aid_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 12345
     ports:
@@ -18,7 +18,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
-    container_name: lab1_pgadmin
+    container_name: military_aid_pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@local.com
       PGADMIN_DEFAULT_PASSWORD: admin

@@ -5,13 +5,20 @@
     <link rel="stylesheet" th:href="@{/styles.css}">
 </head>
 <body>
-<div class='container'>
-    <h2>Web Calculator</h2>
-    <form action='/calculate' method='get'>
-        <input type='text' name='expr' placeholder='Enter expression, e.g. 2+2*2' size='30'/>
-        <button type='submit'>Calculate</button>
+<div class='crud-container' style="width: 450px;">
+    <h2 class='crud-title'>Web Calculator</h2>
+
+    <form action='/calculate' method='get' style="margin-top: 25px;">
+        <div class="crud-form-group">
+            <label>Expression</label>
+            <input type='text' name='expr' placeholder='Enter expression, e.g. 2+2*2' style="font-size: 18px; text-align: center;"/>
+        </div>
+        <button type='submit' class="crud-btn crud-btn-find" style="width: 100%; margin-top: 20px; padding: 14px; font-size: 16px;">Calculate</button>
     </form>
-    <p><a href="/" class="btn-secondary">Go back to Hello page</a></p>
+
+    <p style="margin-top: 30px;">
+        <a href="/" class="btn-back">← Go back to Home</a>
+    </p>
 </div>
 </body>
 </html>

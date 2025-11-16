@@ -6,16 +6,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 
 @SpringBootApplication
-@Controller
 public class Application {
 
     @PostConstruct
@@ -27,62 +21,70 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
-    // ==== 1. Веб-калькулятор з Thymeleaf ====
 
-    @RequestMapping("/")
-    public String home() {
-        return "home"; // повертає home.html
-    }
-
-    @GetMapping("/calculator")
-    public String calculatorForm() {
-        return "calculator"; // повертає calculator.html
-    }
-
-    @GetMapping("/calculate")
-    public String calculate(@RequestParam String expr, Model model) {
-        try {
-            Calculator calculator = new Calculator(); // Використовуємо власний клас!
-            double result = calculator.calculate(expr);
-
-            model.addAttribute("expr", expr);
-            model.addAttribute("result", result);
-
-            return "result"; // повертає result.html
-        } catch (Exception e) {
-            return "error"; // повертає error.html
-        }
-    }
-
-    // ==== 2. Робота з PostgreSQL через JdbcTemplate ====
     @Bean
-    public CommandLineRunner demo(JdbcTemplate jdbcTemplate) {
+    public CommandLineRunner initDatabase(JdbcTemplate jdbcTemplate) {
         return args -> {
             try {
                 System.out.println("✔ Spring Boot connected to PostgreSQL!");
 
                 jdbcTemplate.execute("""
-                        CREATE TABLE IF NOT EXISTS demo_users (
-                            id SERIAL PRIMARY KEY,
-                            name VARCHAR(100)
-                        )
-                        """);
-                System.out.println("✔ Table 'demo_users' is ready.");
+                    CREATE TABLE IF NOT EXISTS countries (
+                        id SERIAL PRIMARY KEY,
+                        name VARCHAR(100) NOT NULL,
+                        total_aid_usd BIGINT DEFAULT 0
+                    )
+                """);
 
-                jdbcTemplate.update(
-                        "INSERT INTO demo_users (name) VALUES (?)",
-                        "Hello from Spring + JdbcTemplate!"
+                jdbcTemplate.execute("""
+                    CREATE TABLE IF NOT EXISTS periods (
+                        id SERIAL PRIMARY KEY,
+                        country_id INT NOT NULL,
+                        period_name VARCHAR(100) NOT NULL,
+                        start_date DATE NOT NULL,
+                        end_date DATE,
+                        aid_amount_usd BIGINT DEFAULT 0,
+                        FOREIGN KEY (country_id) REFERENCES countries(id) ON DELETE CASCADE
+                    )
+                """);
+
+                jdbcTemplate.execute("""
+                    CREATE TABLE IF NOT EXISTS weapons (
+                        id SERIAL PRIMARY KEY,
+                        period_id INT NOT NULL,
+                        weapon_type VARCHAR(100) NOT NULL,
+                        weapon_name VARCHAR(200) NOT NULL,
+                        quantity INT DEFAULT 0,
+                        unit_cost_usd BIGINT DEFAULT 0,
+                        total_cost_usd BIGINT DEFAULT 0,
+                        FOREIGN KEY (period_id) REFERENCES periods(id) ON DELETE CASCADE
+                    )
+                """);
+
+                System.out.println("✔ Tables created successfully!");
+
+                Integer countUSA = jdbcTemplate.queryForObject(
+                        "SELECT COUNT(*) FROM countries WHERE name = 'USA'", Integer.class
                 );
-                System.out.println("✔ Inserted 1 row.");
 
-                List<Map<String, Object>> users = jdbcTemplate.queryForList("SELECT * FROM demo_users");
-                System.out.println("📋 Table content:");
-                users.forEach(user -> {
-                    System.out.println(user.get("id") + " | " + user.get("name"));
-                });
+                if (countUSA == 0) {
+                    jdbcTemplate.update(
+                            "INSERT INTO countries (name, total_aid_usd) VALUES (?, ?)",
+                            "USA", 75000000000L
+                    );
+                    jdbcTemplate.update(
+                            "INSERT INTO countries (name, total_aid_usd) VALUES (?, ?)",
+                            "Germany", 28000000000L
+                    );
+                    jdbcTemplate.update(
+                            "INSERT INTO countries (name, total_aid_usd) VALUES (?, ?)",
+                            "United Kingdom", 15000000000L
+                    );
+                    System.out.println("✔ Test data inserted!");
+                }
 
             } catch (Exception e) {
-                System.err.println("Error during database operation!");
+                System.err.println("Error during database initialization!");
                 e.printStackTrace();
             }
         };

@@ -5,9 +5,17 @@
     <link rel="stylesheet" th:href="@{/styles.css}">
 </head>
 <body>
-<div class='container'>
-    <h2 class='error'>Error: Invalid expression!</h2>
-    <a href='/calculator' class='btn'>Back to calculator</a>
+<div class='crud-container' style="width: 450px;">
+    <h2 class='crud-title' style="color: #ff6b6b;">❌ Error</h2>
+
+    <div style="background: rgba(255, 107, 107, 0.15); padding: 25px; border-radius: 8px; margin: 30px 0; border: 1px solid #ff6b6b;">
+        <p style="color: #ffb3b3; font-size: 18px; margin: 0;">Invalid expression!</p>
+        <p style="color: #ddd; font-size: 14px; margin-top: 15px;">Please enter a valid mathematical expression.</p>
+    </div>
+
+    <p style="margin-top: 30px;">
+        <a href='/calculator' class="crud-btn crud-btn-find" style="display: inline-block; padding: 12px 30px;">← Back to Calculator</a>
+    </p>
 </div>
 </body>
 </html>

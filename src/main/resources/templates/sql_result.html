@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Query Result</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+<div class='crud-container' style="width: 90%; max-width: 1100px;">
+    <h2 class="crud-title">✔ Query Executed Successfully</h2>
+
+    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; margin: 25px 0; border: 1px solid rgba(255,255,255,0.1);">
+        <strong style="color: #90ee90;">Query:</strong>
+        <pre style="margin-top: 15px; white-space: pre-wrap; word-wrap: break-word; color: #e0e0e0;
+                    background: rgba(0,0,0,0.3); padding: 15px; border-radius: 6px;
+                    font-family: 'Courier New', monospace; font-size: 13px;" th:text="${query}"></pre>
+    </div>
+
+    <div th:if="${isSelect}">
+        <h3 style="color: #90ee90; margin-top: 30px;">Results:</h3>
+        <div th:if="${results.isEmpty()}">
+            <p style="color: #ddd;">No results found.</p>
+        </div>
+        <div th:unless="${results.isEmpty()}" style="overflow-x: auto; margin-top: 20px;">
+            <table style="width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.03);">
+                <thead>
+                <tr style="background: linear-gradient(135deg, #0066ff, #00ccff);">
+                    <th th:each="col : ${columns}" th:text="${col}"
+                        style="border: 1px solid rgba(255,255,255,0.1); padding: 12px; text-align: left;
+                                   color: white; font-weight: 600; text-transform: uppercase; font-size: 13px;"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row : ${results}" style="background: rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td th:each="col : ${columns}" th:text="${row.get(col)}"
+                        style="border: 1px solid rgba(255,255,255,0.05); padding: 12px; color: #e0e0e0;"></td>
+                </tr>
+                </tbody>
+            </table>
+            <p style="margin-top: 15px; font-weight: bold; color: #90ee90;">Total rows: <span th:text="${results.size()}"></span></p>
+        </div>
+    </div>
+
+    <div th:unless="${isSelect}">
+        <h3 style="color: #90ee90; margin-top: 30px;">Operation Result:</h3>
+        <p style="font-weight: bold; color: #90ee90; font-size: 18px;">Rows affected: <span th:text="${rowsAffected}"></span></p>
+    </div>
+
+    <p style="margin-top: 35px;">
+        <a href="javascript:history.back()" class="crud-btn crud-btn-find" style="display: inline-block; padding: 12px 30px;">← Back</a>
+    </p>
+</div>
+</body>
+</html>

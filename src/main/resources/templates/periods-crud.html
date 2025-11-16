@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Periods Management</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+<div class='crud-container' style="width: 500px;">
+    <h2 class='crud-title'>Period Management</h2>
+
+    <form action='/operations/periods/execute' method='post' style="margin-top: 20px;">
+        <div class="crud-form-group">
+            <label>ID</label>
+            <input type='text' name='id' placeholder='1'/>
+        </div>
+
+        <div class="crud-form-group">
+            <label>Country ID</label>
+            <input type='text' name='country_id' placeholder='1'/>
+        </div>
+
+        <div class="crud-form-group">
+            <label>Period Name</label>
+            <input type='text' name='period_name' placeholder='2022-2023'/>
+        </div>
+
+        <div class="crud-form-group">
+            <label>Start Date</label>
+            <input type='date' name='start_date' class="crud-date-input"/>
+        </div>
+
+        <div class="crud-form-group">
+            <label>End Date</label>
+            <input type='date' name='end_date' class="crud-date-input"/>
+        </div>
+
+        <div class="crud-form-group">
+            <label>Aid Amount (USD)</label>
+            <input type='text' name='aid_amount_usd' placeholder='10000000000'/>
+        </div>
+
+        <div class="crud-buttons">
+            <button type='submit' name='action' value='find' class="crud-btn crud-btn-find">Find</button>
+            <button type='submit' name='action' value='delete' class="crud-btn crud-btn-delete">Delete</button>
+            <button type='submit' name='action' value='update' class="crud-btn crud-btn-update">Update</button>
+            <button type='submit' name='action' value='add' class="crud-btn crud-btn-add">Add</button>
+        </div>
+    </form>
+
+    <p style="margin-top: 30px; text-align: center;">
+        <a href="/db-operations" class="btn-back">← Back to Operations</a>
+    </p>
+</div>
+</body>
+</html>
