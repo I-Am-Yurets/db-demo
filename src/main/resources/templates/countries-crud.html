@@ -3,38 +3,100 @@
 <head>
     <title>Countries Management</title>
     <link rel="stylesheet" th:href="@{/styles.css}">
+    <style>
+        /* Додатковий стиль для відображення сформованої команди (для налагодження) */
+        .debug-info {
+            font-family: monospace;
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
 <div class='crud-container'>
-    <h2 class='crud-title'>Country Management</h2>
+    <h2 class='crud-title'>Country Management (Secure Parser)</h2>
 
-    <form action='/operations/countries/execute' method='post' style="margin-top: 20px;">
+    <form action='/secure/execute' method='post' id="countryForm" style="margin-top: 20px;">
+
+        <input type="hidden" name="command" id="finalCommandInput" />
+
         <div class="crud-form-group">
             <label>ID</label>
-            <input type='text' name='id' placeholder='11'/>
+            <input type='text' id="inputId" name='id_visual' placeholder='11'/>
         </div>
 
         <div class="crud-form-group">
             <label>Name</label>
-            <input type='text' name='name' placeholder='United States'/>
+            <input type='text' id="inputName" name='name_visual' placeholder='United States'/>
         </div>
 
         <div class="crud-form-group">
             <label>Total Aid (USD)</label>
-            <input type='text' name='total_aid_usd' placeholder='75000000000'/>
+            <input type='text' id="inputAid" name='aid_visual' placeholder='75000000000'/>
         </div>
 
         <div class="crud-buttons">
-            <button type='submit' name='action' value='find' class="crud-btn crud-btn-find">Find</button>
-            <button type='submit' name='action' value='delete' class="crud-btn crud-btn-delete">Delete</button>
-            <button type='submit' name='action' value='update' class="crud-btn crud-btn-update">Update</button>
-            <button type='submit' name='action' value='add' class="crud-btn crud-btn-add">Add</button>
+            <button type='button' onclick="buildAndSubmit('read')" class="crud-btn crud-btn-find">Find</button>
+            <button type='button' onclick="buildAndSubmit('delete')" class="crud-btn crud-btn-delete">Delete</button>
+            <button type='button' onclick="buildAndSubmit('update')" class="crud-btn crud-btn-update">Update</button>
+            <button type='button' onclick="buildAndSubmit('insert')" class="crud-btn crud-btn-add">Add</button>
         </div>
+
+        <div id="debugCommand" class="debug-info"></div>
     </form>
 
     <p style="margin-top: 30px; text-align: center;">
         <a href="/db-operations" class="btn-back">← Back to Operations</a>
     </p>
 </div>
+
+<script>
+    /**
+     * Ця функція конвертує введені дані у формат парсера:
+     * operation table(key='value', key2='value2')
+     */
+    function buildAndSubmit(operation) {
+        const table = 'countries';
+
+        // 1. Отримуємо значення з полів
+        const idVal = document.getElementById('inputId').value.trim();
+        const nameVal = document.getElementById('inputName').value.trim();
+        const aidVal = document.getElementById('inputAid').value.trim();
+
+        let params = [];
+
+        // 2. Логіка формування параметрів згідно з правилами CommandParser
+
+        // ID потрібен для read, delete, update
+        if (idVal) {
+            params.push(`id='${idVal}'`);
+        }
+
+        // Name та Aid потрібні для insert та update
+        if (['insert', 'update'].includes(operation)) {
+            if (nameVal) {
+                params.push(`name='${nameVal}'`);
+            }
+            if (aidVal) {
+                params.push(`total_aid_usd='${aidVal}'`);
+            }
+        }
+
+        // 3. Збираємо фінальний рядок команди
+        // Приклад: insert countries(name='Poland', total_aid_usd='300')
+        const paramsString = params.join(', ');
+        const commandString = `${operation} ${table}(${paramsString})`;
+
+        // 4. Записуємо у приховане поле та відправляємо
+        document.getElementById('finalCommandInput').value = commandString;
+
+        // (Опціонально) Вивід у консоль для перевірки
+        console.log("Sending command:", commandString);
+
+        document.getElementById('countryForm').submit();
+    }
+</script>
 </body>
 </html>

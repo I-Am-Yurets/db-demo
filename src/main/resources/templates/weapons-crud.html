@@ -1,49 +1,57 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Periods Management</title>
+    <title>Weapons Management</title>
     <link rel="stylesheet" th:href="@{/styles.css}">
 </head>
 <body>
 <div class='crud-container' style="width: 500px;">
-    <h2 class='crud-title'>Period Management</h2>
+    <h2 class='crud-title'>Weapon Management (Secure)</h2>
 
-    <form action='/operations/periods/execute' method='post' style="margin-top: 20px;">
+    <form action='/secure/execute' method='post' id="weaponsForm" style="margin-top: 20px;">
+
+        <input type="hidden" name="command" id="finalCommandInput" />
+
         <div class="crud-form-group">
             <label>ID</label>
-            <input type='text' name='id' placeholder='1'/>
+            <input type='text' id="w_id" placeholder='1'/>
         </div>
 
         <div class="crud-form-group">
-            <label>Country ID</label>
-            <input type='text' name='country_id' placeholder='1'/>
+            <label>Period ID</label>
+            <input type='text' id="w_period_id" placeholder='1'/>
         </div>
 
         <div class="crud-form-group">
-            <label>Period Name</label>
-            <input type='text' name='period_name' placeholder='2022-2023'/>
+            <label>Weapon Type</label>
+            <input type='text' id="w_type" placeholder='Artillery'/>
         </div>
 
         <div class="crud-form-group">
-            <label>Start Date</label>
-            <input type='date' name='start_date' class="crud-date-input"/>
+            <label>Weapon Name</label>
+            <input type='text' id="w_name" placeholder='M777 Howitzer'/>
         </div>
 
         <div class="crud-form-group">
-            <label>End Date</label>
-            <input type='date' name='end_date' class="crud-date-input"/>
+            <label>Quantity</label>
+            <input type='text' id="w_quantity" placeholder='100'/>
         </div>
 
         <div class="crud-form-group">
-            <label>Aid Amount (USD)</label>
-            <input type='text' name='aid_amount_usd' placeholder='10000000000'/>
+            <label>Unit Cost (USD)</label>
+            <input type='text' id="w_unit_cost" placeholder='2500000'/>
+        </div>
+
+        <div class="crud-form-group">
+            <label>Total Cost (USD)</label>
+            <input type='text' id="w_total_cost" placeholder='250000000'/>
         </div>
 
         <div class="crud-buttons">
-            <button type='submit' name='action' value='find' class="crud-btn crud-btn-find">Find</button>
-            <button type='submit' name='action' value='delete' class="crud-btn crud-btn-delete">Delete</button>
-            <button type='submit' name='action' value='update' class="crud-btn crud-btn-update">Update</button>
-            <button type='submit' name='action' value='add' class="crud-btn crud-btn-add">Add</button>
+            <button type='button' onclick="submitWeapon('read')" class="crud-btn crud-btn-find">Find</button>
+            <button type='button' onclick="submitWeapon('delete')" class="crud-btn crud-btn-delete">Delete</button>
+            <button type='button' onclick="submitWeapon('update')" class="crud-btn crud-btn-update">Update</button>
+            <button type='button' onclick="submitWeapon('insert')" class="crud-btn crud-btn-add">Add</button>
         </div>
     </form>
 
@@ -51,5 +59,48 @@
         <a href="/db-operations" class="btn-back">← Back to Operations</a>
     </p>
 </div>
+
+<script>
+    function submitWeapon(operation) {
+        const table = 'weapons';
+
+        // Отримуємо значення з полів (по ID)
+        const id = document.getElementById('w_id').value.trim();
+        const periodId = document.getElementById('w_period_id').value.trim();
+        const type = document.getElementById('w_type').value.trim();
+        const name = document.getElementById('w_name').value.trim();
+        const quantity = document.getElementById('w_quantity').value.trim();
+        const unitCost = document.getElementById('w_unit_cost').value.trim();
+        const totalCost = document.getElementById('w_total_cost').value.trim();
+
+        let params = [];
+
+        if (id) {
+            params.push(`id='${id}'`);
+        }
+
+        // 2. Параметри для Insert та Update
+        if (['insert', 'update'].includes(operation)) {
+            // Обов'язкові для Insert (згідно з CommandParser)
+            if (periodId) params.push(`period_id='${periodId}'`);
+            if (type) params.push(`weapon_type='${type}'`);
+            if (name) params.push(`weapon_name='${name}'`);
+
+            // Інші поля (якщо заповнені)
+            if (quantity) params.push(`quantity='${quantity}'`);
+            if (unitCost) params.push(`unit_cost_usd='${unitCost}'`);
+            if (totalCost) params.push(`total_cost_usd='${totalCost}'`);
+        }
+
+        // 3. Формуємо рядок команди
+        // Приклад: insert weapons(period_id='1', weapon_type='Artillery', weapon_name='M777')
+        const commandString = `${operation} ${table}(${params.join(', ')})`;
+
+        // 4. Записуємо команду у приховане поле та відправляємо форму
+        console.log("Command:", commandString); // Для налагодження
+        document.getElementById('finalCommandInput').value = commandString;
+        document.getElementById('weaponsForm').submit();
+    }
+</script>
 </body>
 </html>

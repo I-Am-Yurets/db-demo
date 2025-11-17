@@ -23,11 +23,13 @@ public class SqlController {
 
     @GetMapping
     public String sqlForm() {
+        System.out.println("=== SQL FORM OPENED ===");
         return "sql";
     }
 
     @PostMapping("/execute")
     public String executeSql(@RequestParam String query, Model model) {
+        System.out.println("===========================================");
         System.out.println("=== SQL EXECUTE START ===");
         System.out.println("Query received: " + query);
 
@@ -45,9 +47,11 @@ public class SqlController {
 
                 if (!results.isEmpty()) {
                     model.addAttribute("columns", results.get(0).keySet());
+                    System.out.println("Columns: " + results.get(0).keySet());
                 }
 
                 System.out.println("Returning: sql_result");
+                System.out.println("===========================================");
                 return "sql_result";
             } else {
                 System.out.println("Executing non-SELECT query...");
@@ -59,19 +63,21 @@ public class SqlController {
                 model.addAttribute("isSelect", false);
 
                 System.out.println("Returning: sql_result");
+                System.out.println("===========================================");
                 return "sql_result";
             }
         } catch (Exception e) {
-            System.out.println("ERROR: " + e.getMessage());
+            System.out.println("!!! ERROR OCCURRED !!!");
+            System.out.println("ERROR MESSAGE: " + e.getMessage());
+            System.out.println("ERROR CLASS: " + e.getClass().getName());
             e.printStackTrace();
 
             model.addAttribute("query", query);
             model.addAttribute("error", e.getMessage());
 
             System.out.println("Returning: sql_error");
+            System.out.println("===========================================");
             return "sql_error";
-        } finally {
-            System.out.println("=== SQL EXECUTE END ===");
         }
     }
 }
