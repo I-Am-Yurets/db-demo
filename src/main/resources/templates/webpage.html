@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Система обліку військової допомоги</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<h1>🎖️ Система обліку військової допомоги</h1>
+<p class="subtitle">
+    Spring Boot + Spring Data JPA + Hibernate<br>
+    <strong>Автоматичний захист від SQL Injection через JPA</strong>
+</p>
+
+<div class="container">
+
+    <!-- ==================== КРАЇНИ-ДОНОРИ ==================== -->
+    <div class="column">
+        <h2>🌍 Країни-донори</h2>
+
+        <form action="/addCountry" method="post">
+            <div>
+                <div class="label">Назва країни</div>
+                <input type="text" name="name" placeholder="USA" required>
+            </div>
+            <div>
+                <div class="label">Загальна допомога (USD)</div>
+                <input type="number" name="totalAidUsd" placeholder="75000000000" required>
+            </div>
+            <button type="submit">Додати Країну</button>
+        </form>
+
+        <ul>
+            <li th:each="country : ${countries}">
+                <div class="item-info">
+                    <div class="item-name" th:text="${country.name}">USA</div>
+                    <div class="item-details">
+                        Допомога: $<span th:text="${#numbers.formatDecimal(country.totalAidUsd, 0, 'COMMA', 0, 'POINT')}">75,000,000,000</span>
+                    </div>
+                </div>
+                <a th:href="@{/deleteCountry/{id}(id=${country.id})}" class="delete-btn">Видалити</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- ==================== ПЕРІОДИ ДОПОМОГИ ==================== -->
+    <div class="column">
+        <h2>📅 Періоди допомоги</h2>
+
+        <form action="/addPeriod" method="post">
+            <div>
+                <div class="label">Назва періоду</div>
+                <input type="text" name="periodName" placeholder="2022 Q1-Q2" required>
+            </div>
+            <div>
+                <div class="label">Країна</div>
+                <select name="countryId" required>
+                    <option value="" disabled selected>Оберіть країну</option>
+                    <option th:each="country : ${countries}"
+                            th:value="${country.id}"
+                            th:text="${country.name}">Country</option>
+                </select>
+            </div>
+            <div>
+                <div class="label">Дата початку</div>
+                <input type="date" name="startDate" required>
+            </div>
+            <div>
+                <div class="label">Дата закінчення (опціонально)</div>
+                <input type="date" name="endDate">
+            </div>
+            <div>
+                <div class="label">Сума допомоги (USD)</div>
+                <input type="number" name="aidAmountUsd" placeholder="15000000000" required>
+            </div>
+            <button type="submit">Додати Період</button>
+        </form>
+
+        <ul>
+            <li th:each="period : ${periods}">
+                <div class="item-info">
+                    <div class="item-name" th:text="${period.periodName}">2022 Q1-Q2</div>
+                    <div class="item-details">
+                        Країна: <span th:text="${period.country.name}">USA</span><br>
+                        Період: <span th:text="${period.startDate}">2022-01-01</span> -
+                        <span th:text="${period.endDate != null ? period.endDate : 'Ongoing'}">2022-06-30</span><br>
+                        Сума: $<span th:text="${#numbers.formatDecimal(period.aidAmountUsd, 0, 'COMMA', 0, 'POINT')}">15,000,000,000</span>
+                    </div>
+                </div>
+                <a th:href="@{/deletePeriod/{id}(id=${period.id})}" class="delete-btn">Видалити</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- ==================== ПЕРЕДАНА ЗБРОЯ ==================== -->
+    <div class="column">
+        <h2>🔫 Передана зброя</h2>
+
+        <form action="/addWeapon" method="post">
+            <div>
+                <div class="label">Тип зброї</div>
+                <input type="text" name="weaponType" placeholder="Artillery" required>
+            </div>
+            <div>
+                <div class="label">Назва зброї</div>
+                <input type="text" name="weaponName" placeholder="M777 Howitzer" required>
+            </div>
+            <div>
+                <div class="label">Період</div>
+                <select name="periodId" required>
+                    <option value="" disabled selected>Оберіть період</option>
+                    <option th:each="period : ${periods}"
+                            th:value="${period.id}"
+                            th:text="${period.periodName + ' (' + period.country.name + ')'}">Period</option>
+                </select>
+            </div>
+            <div>
+                <div class="label">Кількість одиниць</div>
+                <input type="number" name="quantity" placeholder="90" required>
+            </div>
+            <div>
+                <div class="label">Вартість одиниці (USD)</div>
+                <input type="number" name="unitCostUsd" placeholder="2500000" required>
+            </div>
+            <div>
+                <div class="label">Загальна вартість (USD)</div>
+                <input type="number" name="totalCostUsd" placeholder="225000000" required>
+            </div>
+            <button type="submit">Додати Зброю</button>
+        </form>
+
+        <ul>
+            <li th:each="weapon : ${weapons}">
+                <div class="item-info">
+                    <div class="item-name" th:text="${weapon.weaponName}">M777 Howitzer</div>
+                    <div class="item-details">
+                        Тип: <span th:text="${weapon.weaponType}">Artillery</span><br>
+                        Період: <span th:text="${weapon.period.periodName}">2022 Q1-Q2</span><br>
+                        Кількість: <span th:text="${weapon.quantity}">90</span> шт.<br>
+                        Загальна вартість: $<span th:text="${#numbers.formatDecimal(weapon.totalCostUsd, 0, 'COMMA', 0, 'POINT')}">225,000,000</span>
+                    </div>
+                </div>
+                <a th:href="@{/deleteWeapon/{id}(id=${weapon.id})}" class="delete-btn">Видалити</a>
+            </li>
+        </ul>
+    </div>
+
+</div>
+
+</body>
+</html>
