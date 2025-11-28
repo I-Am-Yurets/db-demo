@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редагувати Зброю</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<div class="container" style="max-width: 600px; margin: 50px auto;">
+    <div class="column">
+        <h2>✏️ Редагувати Зброю</h2>
+
+        <form action="/updateWeapon" method="post">
+            <input type="hidden" name="id" th:value="${weapon.id}">
+
+            <div>
+                <div class="label">Тип зброї</div>
+                <input type="text" name="weaponType" th:value="${weapon.weaponType}" required>
+            </div>
+
+            <div>
+                <div class="label">Назва зброї</div>
+                <input type="text" name="weaponName" th:value="${weapon.weaponName}" required>
+            </div>
+
+            <div>
+                <div class="label">Період</div>
+                <select name="periodId" required>
+                    <option th:each="period : ${periods}"
+                            th:value="${period.id}"
+                            th:text="${period.periodName + ' (' + period.country.name + ')'}"
+                            th:selected="${period.id == weapon.period.id}">Period</option>
+                </select>
+            </div>
+
+            <div>
+                <div class="label">Кількість одиниць</div>
+                <input type="number" name="quantity" th:value="${weapon.quantity}" required>
+            </div>
+
+            <div>
+                <div class="label">Вартість одиниці (USD)</div>
+                <input type="number" name="unitCostUsd" th:value="${weapon.unitCostUsd}" required>
+            </div>
+
+            <div>
+                <div class="label">Загальна вартість (USD)</div>
+                <input type="number" name="totalCostUsd" th:value="${weapon.totalCostUsd}" required>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button type="submit" style="flex: 1;">Зберегти зміни</button>
+                <a href="/" class="edit-btn" style="flex: 1; text-align: center; display: flex; align-items: center; justify-content: center; text-decoration: none;">Скасувати</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

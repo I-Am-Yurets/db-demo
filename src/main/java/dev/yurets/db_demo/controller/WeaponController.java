@@ -1,11 +1,10 @@
 package dev.yurets.db_demo.controller;
 
-import dev.yurets.db_demo.model.Period;
 import dev.yurets.db_demo.model.Weapon;
 import dev.yurets.db_demo.repository.PeriodRepository;
-import dev.yurets.db_demo.repository.WeaponRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import dev.yurets.db_demo.service.WeaponService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,19 +14,23 @@ import java.math.BigDecimal;
 
 /**
  * Контролер для роботи зі зброєю
- * Обробляє операції CREATE та DELETE для таблиці weapons
+ * Обробляє всі CRUD операції: CREATE, READ, UPDATE, DELETE
  */
 @Controller
 public class WeaponController {
 
-    @Autowired
-    private WeaponRepository weaponRepository;
+    private final WeaponService weaponService;
+    private final PeriodRepository periodRepository;
 
-    @Autowired
-    private PeriodRepository periodRepository;
+    // Dependency Injection через конструктор
+    public WeaponController(WeaponService weaponService,
+                            PeriodRepository periodRepository) {
+        this.weaponService = weaponService;
+        this.periodRepository = periodRepository;
+    }
 
     /**
-     * Додати нову зброю
+     * CREATE: Додати нову зброю
      * POST /addWeapon
      */
     @PostMapping("/addWeapon")
@@ -37,33 +40,50 @@ public class WeaponController {
                             @RequestParam BigDecimal unitCostUsd,
                             @RequestParam BigDecimal totalCostUsd,
                             @RequestParam Long periodId) {
-
-        // Знаходимо період, до якого належить зброя
-        Period period = periodRepository.findById(periodId)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Період з ID " + periodId + " не знайдено!"));
-
-        Weapon weapon = new Weapon(weaponType, weaponName, quantity,
-                unitCostUsd, totalCostUsd, period);
-        weaponRepository.save(weapon);
-
-        System.out.println("[INFO] Додано зброю: " + weaponName +
-                " (тип: " + weaponType + ", кількість: " + quantity + ")");
-
+        weaponService.createWeapon(weaponType, weaponName, quantity,
+                unitCostUsd, totalCostUsd, periodId);
         return "redirect:/";
     }
 
     /**
-     * Видалити зброю за ID
+     * READ: Переглянути зброю для редагування
+     * GET /editWeapon/{id}
+     */
+    @GetMapping("/editWeapon/{id}")
+    public String editWeaponForm(@PathVariable Long id, Model model) {
+        Weapon weapon = weaponService.getWeaponById(id)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Зброю з ID " + id + " не знайдено!"));
+
+        model.addAttribute("weapon", weapon);
+        model.addAttribute("periods", periodRepository.findAllByOrderByIdAsc());
+        return "edit-weapon"; // templates/edit-weapon.html
+    }
+
+    /**
+     * UPDATE: Оновити існуючу зброю
+     * POST /updateWeapon
+     */
+    @PostMapping("/updateWeapon")
+    public String updateWeapon(@RequestParam Long id,
+                               @RequestParam String weaponType,
+                               @RequestParam String weaponName,
+                               @RequestParam Integer quantity,
+                               @RequestParam BigDecimal unitCostUsd,
+                               @RequestParam BigDecimal totalCostUsd,
+                               @RequestParam Long periodId) {
+        weaponService.updateWeapon(id, weaponType, weaponName, quantity,
+                unitCostUsd, totalCostUsd, periodId);
+        return "redirect:/";
+    }
+
+    /**
+     * DELETE: Видалити зброю за ID
      * GET /deleteWeapon/{id}
      */
     @GetMapping("/deleteWeapon/{id}")
     public String deleteWeapon(@PathVariable Long id) {
-        weaponRepository.findById(id).ifPresent(weapon -> {
-            System.out.println("[INFO] Видалення зброї: " + weapon.getWeaponName());
-        });
-
-        weaponRepository.deleteById(id);
+        weaponService.deleteWeapon(id);
         return "redirect:/";
     }
 }

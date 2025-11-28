@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редагувати Країну</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<div class="container" style="max-width: 600px; margin: 50px auto;">
+    <div class="column">
+        <h2>✏️ Редагувати Країну</h2>
+
+        <form action="/updateCountry" method="post">
+            <input type="hidden" name="id" th:value="${country.id}">
+
+            <div>
+                <div class="label">Назва країни</div>
+                <input type="text" name="name" th:value="${country.name}" required>
+            </div>
+
+            <div>
+                <div class="label">Загальна допомога (USD)</div>
+                <input type="number" name="totalAidUsd" th:value="${country.totalAidUsd}" required>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button type="submit" style="flex: 1;">Зберегти зміни</button>
+                <a href="/" class="edit-btn" style="flex: 1; text-align: center; display: flex; align-items: center; justify-content: center; text-decoration: none;">Скасувати</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

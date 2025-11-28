@@ -32,7 +32,7 @@ h1 {
 }
 
 /* ==========================================
-   КОНТЕЙНЕР З КОЛОНКАМИ
+   КОНТЕЙНЕР З КОЛОНКАМИ (старий - горизонтальний)
    ========================================== */
 
 .container {
@@ -43,8 +43,20 @@ h1 {
     margin: 0 auto;
 }
 
+/* ==========================================
+   КОНТЕЙНЕР З РЯДКАМИ (новий - вертикальний стек)
+   ========================================== */
+
+.container-rows {
+    display: flex;
+    flex-direction: column; /* ЗМІНА: Встановлюємо вертикальний напрямок */
+    gap: 20px;
+    max-width: 1000px; /* Трохи менша ширина, краща для вертикальних списків */
+    margin: 0 auto;
+}
+
 .column {
-    flex: 1;
+    /* flex: 1; - Залишаємо для .container, ігноруємо для .container-rows */
     background: rgba(255,255,255,0.05);
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.3);
@@ -52,6 +64,23 @@ h1 {
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255,255,255,0.1);
 }
+
+/* Примусове застосування 100% ширини для колонок у вертикальних контейнерах */
+.container-rows .column {
+    width: 100%;
+    flex: none;
+}
+
+/* ------------------------------------------
+   НОВИЙ СТИЛЬ: СІТКА КОНТЕНТУ ВНУТРІ КОЛОНКИ
+   ------------------------------------------ */
+.content-grid {
+    display: grid;
+    /* 2 стовпці: один для форми, другий для списку. */
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+/* ------------------------------------------ */
 
 /* ==========================================
    ЗАГОЛОВКИ КОЛОНОК
@@ -74,7 +103,7 @@ h2 {
 form {
     display: grid;
     gap: 12px;
-    margin-bottom: 25px;
+    margin-bottom: 0; /* Видаляємо нижній відступ форми, оскільки він тепер у content-grid */
     padding: 15px;
     background: rgba(0,0,0,0.2);
     border-radius: 8px;
@@ -195,9 +224,40 @@ li:hover {
 }
 
 /* ==========================================
-   КНОПКА ВИДАЛЕННЯ
+   КНОПКИ ДІЙСТВ (РЕДАГУВАТИ / ВИДАЛИТИ)
    ========================================== */
 
+.item-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.edit-btn {
+    color: #00ccff;
+    text-decoration: none;
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    background: rgba(0, 204, 255, 0.1);
+    transition: all 0.2s;
+    border: 1px solid rgba(0, 204, 255, 0.3);
+}
+
+/* Стиль для кнопки "Скасувати" на сторінках редагування */
+.edit-btn.cancel {
+    color: #e0e0e0;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.edit-btn:hover {
+    background: rgba(0, 204, 255, 0.2);
+    text-decoration: none;
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 204, 255, 0.3);
+}
+
+/* Оновлені стилі для кнопки Delete (повернення до початкового вигляду) */
 .delete-btn {
     color: #ff6b6b;
     text-decoration: none;
@@ -212,41 +272,6 @@ li:hover {
 .delete-btn:hover {
     background: rgba(255, 107, 107, 0.2);
     text-decoration: none;
-    transform: scale(1.05);
+    /* ВИЛУЧЕНО: transform: scale(1.05); */
     box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
-}
-
-/* ==========================================
-   АДАПТИВНІСТЬ (для мобільних пристроїв)
-   ========================================== */
-
-@media (max-width: 1024px) {
-    .container {
-        flex-direction: column;
-    }
-
-    .column {
-        width: 100%;
-    }
-}
-
-/* ==========================================
-   СКРОЛБАР
-   ========================================== */
-
-::-webkit-scrollbar {
-    width: 10px;
-}
-
-::-webkit-scrollbar-track {
-    background: rgba(0,0,0,0.2);
-}
-
-::-webkit-scrollbar-thumb {
-    background: rgba(0, 102, 255, 0.5);
-    border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 102, 255, 0.7);
 }
