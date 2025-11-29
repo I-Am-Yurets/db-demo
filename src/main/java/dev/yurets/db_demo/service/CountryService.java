@@ -2,6 +2,8 @@ package dev.yurets.db_demo.service;
 
 import dev.yurets.db_demo.model.Country;
 import dev.yurets.db_demo.repository.CountryRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,9 +19,10 @@ import java.util.Optional;
 @Transactional
 public class CountryService {
 
+    private static final Logger log = LoggerFactory.getLogger(CountryService.class);
+
     private final CountryRepository countryRepository;
 
-    // Dependency Injection через конструктор
     public CountryService(CountryRepository countryRepository) {
         this.countryRepository = countryRepository;
     }
@@ -39,35 +42,75 @@ public class CountryService {
     }
 
     /**
-     * Створити нову країну
+     * Створити нову країну з валідацією
      */
-    public Country createCountry(String name, BigDecimal totalAidUsd) {
-        Country country = new Country(name, totalAidUsd);
+    public void createCountry(String name, BigDecimal totalAidUsd) {
+        // Валідація назви
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Назва країни не може бути порожньою");
+        }
+        if (name.trim().length() < 2) {
+            throw new IllegalArgumentException("Назва країни має містити мінімум 2 символи");
+        }
+        if (name.trim().length() > 100) {
+            throw new IllegalArgumentException("Назва країни занадто довга (максимум 100 символів)");
+        }
+
+        // Валідація суми
+        if (totalAidUsd == null) {
+            throw new IllegalArgumentException("Сума допомоги обов'язкова");
+        }
+        if (totalAidUsd.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Сума допомоги має бути додатною");
+        }
+        if (totalAidUsd.compareTo(new BigDecimal("999999999999999")) > 0) {
+            throw new IllegalArgumentException("Сума допомоги занадто велика");
+        }
+
+        Country country = new Country(name.trim(), totalAidUsd);
         Country saved = countryRepository.save(country);
 
-        System.out.println("[SERVICE] Створено країну: " + saved.getName() +
-                " (ID: " + saved.getId() + ")");
+        log.info("Створено країну: {} (ID: {})", saved.getName(), saved.getId());
 
-        return saved;
     }
 
     /**
-     * Оновити існуючу країну
+     * Оновити існуючу країну з валідацією
      */
-    public Country updateCountry(Long id, String name, BigDecimal totalAidUsd) {
+    public void updateCountry(Long id, String name, BigDecimal totalAidUsd) {
         Country country = countryRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Країну з ID " + id + " не знайдено!"));
 
-        country.setName(name);
+        // Валідація назви
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Назва країни не може бути порожньою");
+        }
+        if (name.trim().length() < 2) {
+            throw new IllegalArgumentException("Назва країни має містити мінімум 2 символи");
+        }
+        if (name.trim().length() > 100) {
+            throw new IllegalArgumentException("Назва країни занадто довга (максимум 100 символів)");
+        }
+
+        // Валідація суми
+        if (totalAidUsd == null) {
+            throw new IllegalArgumentException("Сума допомоги обов'язкова");
+        }
+        if (totalAidUsd.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Сума допомоги має бути додатною");
+        }
+        if (totalAidUsd.compareTo(new BigDecimal("999999999999999")) > 0) {
+            throw new IllegalArgumentException("Сума допомоги занадто велика");
+        }
+
+        country.setName(name.trim());
         country.setTotalAidUsd(totalAidUsd);
 
         Country updated = countryRepository.save(country);
 
-        System.out.println("[SERVICE] Оновлено країну: " + updated.getName() +
-                " (ID: " + updated.getId() + ")");
+        log.info("Оновлено країну: {} (ID: {})", updated.getName(), updated.getId());
 
-        return updated;
     }
 
     /**
@@ -79,8 +122,7 @@ public class CountryService {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Країну з ID " + id + " не знайдено!"));
 
-        System.out.println("[SERVICE] Видалення країни: " + country.getName() +
-                " (ID: " + country.getId() + ")");
+        log.info("Видалення країни: {} (ID: {})", country.getName(), country.getId());
 
         countryRepository.deleteById(id);
     }

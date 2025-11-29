@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<div class="container" style="max-width: 600px; margin: 50px auto;">
+<div class="container" style="max-width: 400px; margin: 60px auto;">
     <div class="column">
         <h2>✏️ Редагувати Країну</h2>
 
@@ -22,7 +22,7 @@
 
             <div>
                 <div class="label">Загальна допомога (USD)</div>
-                <input type="number" name="totalAidUsd" th:value="${country.totalAidUsd}" required>
+                <input type="number" name="totalAidUsd" th:value="${#numbers.formatDecimal(country.totalAidUsd, 0, 'NONE', 0, 'NONE')}" required>
             </div>
 
             <div style="display: flex; gap: 10px; margin-top: 10px;">

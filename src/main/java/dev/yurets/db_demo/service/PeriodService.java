@@ -4,6 +4,8 @@ import dev.yurets.db_demo.model.Country;
 import dev.yurets.db_demo.model.Period;
 import dev.yurets.db_demo.repository.CountryRepository;
 import dev.yurets.db_demo.repository.PeriodRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +22,11 @@ import java.util.Optional;
 @Transactional
 public class PeriodService {
 
+    private static final Logger log = LoggerFactory.getLogger(PeriodService.class);
+
     private final PeriodRepository periodRepository;
     private final CountryRepository countryRepository;
 
-    // Dependency Injection через конструктор
     public PeriodService(PeriodRepository periodRepository,
                          CountryRepository countryRepository) {
         this.periodRepository = periodRepository;
@@ -52,40 +55,110 @@ public class PeriodService {
     }
 
     /**
-     * Створити новий період
+     * Створити новий період з валідацією
      */
-    public Period createPeriod(String periodName, LocalDate startDate,
-                               LocalDate endDate, BigDecimal aidAmountUsd,
-                               Long countryId) {
+    public void createPeriod(String periodName, LocalDate startDate,
+                             LocalDate endDate, BigDecimal aidAmountUsd,
+                             Long countryId) {
+        // Валідація назви періоду
+        if (periodName == null || periodName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Назва періоду не може бути порожньою");
+        }
+        if (periodName.trim().length() < 2) {
+            throw new IllegalArgumentException("Назва періоду має містити мінімум 2 символи");
+        }
+        if (periodName.trim().length() > 100) {
+            throw new IllegalArgumentException("Назва періоду занадто довга (максимум 100 символів)");
+        }
+
+        // Валідація дати початку
+        if (startDate == null) {
+            throw new IllegalArgumentException("Дата початку обов'язкова");
+        }
+
+        // Валідація дат (якщо вказано дату закінчення)
+        if (endDate != null && startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("Дата закінчення не може бути раніше дати початку");
+        }
+
+        // Валідація суми
+        if (aidAmountUsd == null) {
+            throw new IllegalArgumentException("Сума допомоги обов'язкова");
+        }
+        if (aidAmountUsd.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Сума допомоги має бути додатною");
+        }
+        if (aidAmountUsd.compareTo(new BigDecimal("999999999999999")) > 0) {
+            throw new IllegalArgumentException("Сума допомоги занадто велика");
+        }
+
+        // Валідація країни
+        if (countryId == null) {
+            throw new IllegalArgumentException("Країна обов'язкова");
+        }
         Country country = countryRepository.findById(countryId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Країну з ID " + countryId + " не знайдено!"));
 
-        Period period = new Period(periodName, startDate, endDate, aidAmountUsd, country);
+        Period period = new Period(periodName.trim(), startDate, endDate, aidAmountUsd, country);
         Period saved = periodRepository.save(period);
 
-        System.out.println("[SERVICE] Створено період: " + saved.getPeriodName() +
-                " для країни " + country.getName() +
-                " (ID: " + saved.getId() + ")");
+        log.info("Створено період: {} для країни {} (ID: {})",
+                saved.getPeriodName(), country.getName(), saved.getId());
 
-        return saved;
     }
 
     /**
-     * Оновити існуючий період
+     * Оновити існуючий період з валідацією
      */
-    public Period updatePeriod(Long id, String periodName, LocalDate startDate,
-                               LocalDate endDate, BigDecimal aidAmountUsd,
-                               Long countryId) {
+    public void updatePeriod(Long id, String periodName, LocalDate startDate,
+                             LocalDate endDate, BigDecimal aidAmountUsd,
+                             Long countryId) {
         Period period = periodRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Період з ID " + id + " не знайдено!"));
 
+        // Валідація назви періоду
+        if (periodName == null || periodName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Назва періоду не може бути порожньою");
+        }
+        if (periodName.trim().length() < 2) {
+            throw new IllegalArgumentException("Назва періоду має містити мінімум 2 символи");
+        }
+        if (periodName.trim().length() > 100) {
+            throw new IllegalArgumentException("Назва періоду занадто довга (максимум 100 символів)");
+        }
+
+        // Валідація дати початку
+        if (startDate == null) {
+            throw new IllegalArgumentException("Дата початку обов'язкова");
+        }
+
+        // Валідація дат (якщо вказано дату закінчення)
+        if (endDate != null && startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("Дата закінчення не може бути раніше дати початку");
+        }
+
+        // Валідація суми
+        if (aidAmountUsd == null) {
+            throw new IllegalArgumentException("Сума допомоги обов'язкова");
+        }
+        if (aidAmountUsd.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Сума допомоги має бути додатною");
+        }
+        if (aidAmountUsd.compareTo(new BigDecimal("999999999999999")) > 0) {
+            throw new IllegalArgumentException("Сума допомоги занадто велика");
+        }
+
+        // Валідація країни
+        if (countryId == null) {
+            throw new IllegalArgumentException("Країна обов'язкова");
+        }
         Country country = countryRepository.findById(countryId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Країну з ID " + countryId + " не знайдено!"));
 
-        period.setPeriodName(periodName);
+        period.setPeriodName(periodName.trim());
         period.setStartDate(startDate);
         period.setEndDate(endDate);
         period.setAidAmountUsd(aidAmountUsd);
@@ -93,10 +166,8 @@ public class PeriodService {
 
         Period updated = periodRepository.save(period);
 
-        System.out.println("[SERVICE] Оновлено період: " + updated.getPeriodName() +
-                " (ID: " + updated.getId() + ")");
+        log.info("Оновлено період: {} (ID: {})", updated.getPeriodName(), updated.getId());
 
-        return updated;
     }
 
     /**
@@ -108,8 +179,7 @@ public class PeriodService {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Період з ID " + id + " не знайдено!"));
 
-        System.out.println("[SERVICE] Видалення періоду: " + period.getPeriodName() +
-                " (ID: " + period.getId() + ")");
+        log.info("Видалення періоду: {} (ID: {})", period.getPeriodName(), period.getId());
 
         periodRepository.deleteById(id);
     }

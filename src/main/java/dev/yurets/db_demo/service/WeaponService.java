@@ -4,6 +4,8 @@ import dev.yurets.db_demo.model.Period;
 import dev.yurets.db_demo.model.Weapon;
 import dev.yurets.db_demo.repository.PeriodRepository;
 import dev.yurets.db_demo.repository.WeaponRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,10 +21,11 @@ import java.util.Optional;
 @Transactional
 public class WeaponService {
 
+    private static final Logger log = LoggerFactory.getLogger(WeaponService.class);
+
     private final WeaponRepository weaponRepository;
     private final PeriodRepository periodRepository;
 
-    // Dependency Injection через конструктор
     public WeaponService(WeaponRepository weaponRepository,
                          PeriodRepository periodRepository) {
         this.weaponRepository = weaponRepository;
@@ -51,43 +54,158 @@ public class WeaponService {
     }
 
     /**
-     * Створити нову зброю
+     * Створити нову зброю з валідацією
      */
-    public Weapon createWeapon(String weaponType, String weaponName,
-                               Integer quantity, BigDecimal unitCostUsd,
-                               BigDecimal totalCostUsd, Long periodId) {
+    public void createWeapon(String weaponType, String weaponName,
+                             Integer quantity, BigDecimal unitCostUsd,
+                             BigDecimal totalCostUsd, Long periodId) {
+        // Валідація типу зброї
+        if (weaponType == null || weaponType.trim().isEmpty()) {
+            throw new IllegalArgumentException("Тип зброї не може бути порожнім");
+        }
+        if (weaponType.trim().length() < 2) {
+            throw new IllegalArgumentException("Тип зброї має містити мінімум 2 символи");
+        }
+        if (weaponType.trim().length() > 100) {
+            throw new IllegalArgumentException("Тип зброї занадто довгий (максимум 100 символів)");
+        }
+
+        // Валідація назви зброї
+        if (weaponName == null || weaponName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Назва зброї не може бути порожньою");
+        }
+        if (weaponName.trim().length() < 2) {
+            throw new IllegalArgumentException("Назва зброї має містити мінімум 2 символи");
+        }
+        if (weaponName.trim().length() > 200) {
+            throw new IllegalArgumentException("Назва зброї занадто довга (максимум 200 символів)");
+        }
+
+        // Валідація кількості
+        if (quantity == null) {
+            throw new IllegalArgumentException("Кількість обов'язкова");
+        }
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Кількість має бути додатною");
+        }
+        if (quantity > 1000000) {
+            throw new IllegalArgumentException("Кількість занадто велика (максимум 1,000,000)");
+        }
+
+        // Валідація вартості одиниці
+        if (unitCostUsd == null) {
+            throw new IllegalArgumentException("Вартість одиниці обов'язкова");
+        }
+        if (unitCostUsd.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Вартість одиниці має бути додатною");
+        }
+        if (unitCostUsd.compareTo(new BigDecimal("999999999999")) > 0) {
+            throw new IllegalArgumentException("Вартість одиниці занадто велика");
+        }
+
+        // Валідація загальної вартості
+        if (totalCostUsd == null) {
+            throw new IllegalArgumentException("Загальна вартість обов'язкова");
+        }
+        if (totalCostUsd.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Загальна вартість має бути додатною");
+        }
+        if (totalCostUsd.compareTo(new BigDecimal("999999999999999")) > 0) {
+            throw new IllegalArgumentException("Загальна вартість занадто велика");
+        }
+
+        // Валідація періоду
+        if (periodId == null) {
+            throw new IllegalArgumentException("Період обов'язковий");
+        }
         Period period = periodRepository.findById(periodId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Період з ID " + periodId + " не знайдено!"));
 
-        Weapon weapon = new Weapon(weaponType, weaponName, quantity,
+        Weapon weapon = new Weapon(weaponType.trim(), weaponName.trim(), quantity,
                 unitCostUsd, totalCostUsd, period);
         Weapon saved = weaponRepository.save(weapon);
 
-        System.out.println("[SERVICE] Створено зброю: " + saved.getWeaponName() +
-                " (тип: " + saved.getWeaponType() +
-                ", кількість: " + saved.getQuantity() +
-                ", ID: " + saved.getId() + ")");
+        log.info("Створено зброю: {} (тип: {}, кількість: {}, ID: {})",
+                saved.getWeaponName(), saved.getWeaponType(), saved.getQuantity(), saved.getId());
 
-        return saved;
     }
 
     /**
-     * Оновити існуючу зброю
+     * Оновити існуючу зброю з валідацією
      */
-    public Weapon updateWeapon(Long id, String weaponType, String weaponName,
-                               Integer quantity, BigDecimal unitCostUsd,
-                               BigDecimal totalCostUsd, Long periodId) {
+    public void updateWeapon(Long id, String weaponType, String weaponName,
+                             Integer quantity, BigDecimal unitCostUsd,
+                             BigDecimal totalCostUsd, Long periodId) {
         Weapon weapon = weaponRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Зброю з ID " + id + " не знайдено!"));
 
+        // Валідація типу зброї
+        if (weaponType == null || weaponType.trim().isEmpty()) {
+            throw new IllegalArgumentException("Тип зброї не може бути порожнім");
+        }
+        if (weaponType.trim().length() < 2) {
+            throw new IllegalArgumentException("Тип зброї має містити мінімум 2 символи");
+        }
+        if (weaponType.trim().length() > 100) {
+            throw new IllegalArgumentException("Тип зброї занадто довгий (максимум 100 символів)");
+        }
+
+        // Валідація назви зброї
+        if (weaponName == null || weaponName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Назва зброї не може бути порожньою");
+        }
+        if (weaponName.trim().length() < 2) {
+            throw new IllegalArgumentException("Назва зброї має містити мінімум 2 символи");
+        }
+        if (weaponName.trim().length() > 200) {
+            throw new IllegalArgumentException("Назва зброї занадто довга (максимум 200 символів)");
+        }
+
+        // Валідація кількості
+        if (quantity == null) {
+            throw new IllegalArgumentException("Кількість обов'язкова");
+        }
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Кількість має бути додатною");
+        }
+        if (quantity > 1000000) {
+            throw new IllegalArgumentException("Кількість занадто велика (максимум 1,000,000)");
+        }
+
+        // Валідація вартості одиниці
+        if (unitCostUsd == null) {
+            throw new IllegalArgumentException("Вартість одиниці обов'язкова");
+        }
+        if (unitCostUsd.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Вартість одиниці має бути додатною");
+        }
+        if (unitCostUsd.compareTo(new BigDecimal("999999999999")) > 0) {
+            throw new IllegalArgumentException("Вартість одиниці занадто велика");
+        }
+
+        // Валідація загальної вартості
+        if (totalCostUsd == null) {
+            throw new IllegalArgumentException("Загальна вартість обов'язкова");
+        }
+        if (totalCostUsd.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Загальна вартість має бути додатною");
+        }
+        if (totalCostUsd.compareTo(new BigDecimal("999999999999999")) > 0) {
+            throw new IllegalArgumentException("Загальна вартість занадто велика");
+        }
+
+        // Валідація періоду
+        if (periodId == null) {
+            throw new IllegalArgumentException("Період обов'язковий");
+        }
         Period period = periodRepository.findById(periodId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Період з ID " + periodId + " не знайдено!"));
 
-        weapon.setWeaponType(weaponType);
-        weapon.setWeaponName(weaponName);
+        weapon.setWeaponType(weaponType.trim());
+        weapon.setWeaponName(weaponName.trim());
         weapon.setQuantity(quantity);
         weapon.setUnitCostUsd(unitCostUsd);
         weapon.setTotalCostUsd(totalCostUsd);
@@ -95,10 +213,8 @@ public class WeaponService {
 
         Weapon updated = weaponRepository.save(weapon);
 
-        System.out.println("[SERVICE] Оновлено зброю: " + updated.getWeaponName() +
-                " (ID: " + updated.getId() + ")");
+        log.info("Оновлено зброю: {} (ID: {})", updated.getWeaponName(), updated.getId());
 
-        return updated;
     }
 
     /**
@@ -109,8 +225,7 @@ public class WeaponService {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Зброю з ID " + id + " не знайдено!"));
 
-        System.out.println("[SERVICE] Видалення зброї: " + weapon.getWeaponName() +
-                " (ID: " + weapon.getId() + ")");
+        log.info("Видалення зброї: {} (ID: {})", weapon.getWeaponName(), weapon.getId());
 
         weaponRepository.deleteById(id);
     }

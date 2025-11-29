@@ -22,75 +22,117 @@
     </a>
 </div>
 
-<div th:if="${error}" class="alert error">
-    <p th:utext="${error}"></p>
+<div th:if="${error}" style="background: rgba(255,107,107,0.2); padding: 15px; border-radius: 8px; margin: 0 auto 20px; max-width: 1000px; border: 1px solid rgba(255,107,107,0.5);">
+    <p style="color: #ff6b6b; margin: 0;" th:utext="${error}"></p>
 </div>
-<div th:if="${message}" class="alert success">
-    <p th:text="${message}"></p>
+<div th:if="${message}" style="background: rgba(144,238,144,0.2); padding: 15px; border-radius: 8px; margin: 0 auto 20px; max-width: 1000px; border: 1px solid rgba(144,238,144,0.5);">
+    <p style="color: #90ee90; margin: 0;" th:text="${message}"></p>
 </div>
 
-<div class="container-rows">
+<div class="container-centered">
 
+    <!-- ==================== КРАЇНИ ==================== -->
     <div class="column">
         <h2>🌍 Країни-донори</h2>
 
         <div class="content-grid">
-
+            <!-- Форма додавання -->
             <div>
                 <form action="/addCountry" method="post">
                     <div>
                         <div class="label">Назва країни</div>
                         <input type="text" name="name"
                                th:value="${oldName != null ? oldName : ''}"
-                               placeholder="USA" required>
+                               placeholder="USA" required minlength="2" maxlength="100">
                     </div>
                     <div>
                         <div class="label">Загальна допомога (USD)</div>
                         <input type="number" name="totalAidUsd"
                                th:value="${oldAid != null ? #numbers.formatDecimal(oldAid, 0, 'NONE', 0, 'NONE') : ''}"
-                               placeholder="75000000000" required>
+                               placeholder="75000000000" required min="0" step="0.01">
                     </div>
-                    <button type="submit">Додати Країну</button>
+                    <button type="submit">➕ Додати Країну</button>
+                </form>
+
+                <!-- Форма пошуку -->
+                <form method="get" action="/" style="margin-top: 20px; background: rgba(0,102,255,0.1);">
+                    <div>
+                        <div class="label">🔍 Пошук країни</div>
+                        <input type="text"
+                               name="searchCountry"
+                               placeholder="Введіть назву країни..."
+                               th:value="${searchCountry}">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" style="flex: 1;">Шукати</button>
+                        <a th:href="@{/}" class="edit-btn" style="flex: 1; display: flex; align-items: center; justify-content: center; text-decoration: none;">Скинути</a>
+                    </div>
                 </form>
             </div>
 
+            <!-- Результати пошуку -->
             <div>
-                <ul>
-                    <li th:each="country : ${countries}">
-                        <div class="item-info">
-                            <div class="item-name" th:text="${country.name}">USA</div>
-                            <div class="item-details">
-                                Допомога: $<span th:text="${#numbers.formatDecimal(country.totalAidUsd, 0, 'COMMA', 0, 'POINT')}">75,000,000,000</span>
+                <!-- Показуємо тільки якщо є пошук -->
+                <div th:if="${searchCountry != null and !searchCountry.isEmpty()}">
+                    <div style="padding: 10px; background: rgba(0,102,255,0.2); border-radius: 8px; margin-bottom: 15px;">
+                        <p style="color: #00ccff; margin: 0; font-weight: bold;">
+                            Результати пошуку: <span th:text="${countries.size()}">0</span> записів
+                        </p>
+                    </div>
+
+                    <!-- Список знайдених країн -->
+                    <ul th:if="${!countries.isEmpty()}">
+                        <li th:each="country : ${countries}">
+                            <div class="item-info">
+                                <div class="item-name" th:text="${country.name}">USA</div>
+                                <div class="item-details">
+                                    Допомога: $<span th:text="${#numbers.formatDecimal(country.totalAidUsd, 0, 'COMMA', 0, 'POINT')}">75,000,000,000</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="item-actions">
-                            <a th:href="@{/editCountry/{id}(id=${country.id})}" class="edit-btn">Редагувати</a>
-                            <a th:href="@{/deleteCountry/{id}(id=${country.id})}" class="delete-btn">Видалити</a>
-                        </div>
-                    </li>
-                </ul>
+                            <div class="item-actions">
+                                <a th:href="@{/editCountry/{id}(id=${country.id})}" class="edit-btn">Редагувати</a>
+                                <a th:href="@{/deleteCountry/{id}(id=${country.id})}" class="delete-btn">Видалити</a>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <!-- Повідомлення про відсутність результатів -->
+                    <div th:if="${countries.isEmpty()}" style="padding: 15px; background: rgba(255,107,107,0.1); border-radius: 8px; text-align: center;">
+                        <p style="color: #ff6b6b; margin: 0;">
+                            ❌ Країн не знайдено за запитом "<span th:text="${searchCountry}"></span>"
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Підказка коли немає пошуку -->
+                <div th:if="${searchCountry == null or searchCountry.isEmpty()}" style="padding: 20px; background: rgba(255,255,255,0.03); border-radius: 8px; text-align: center;">
+                    <p style="color: #bbb; margin: 0;">
+                        💡 Використовуйте пошук для відображення країн
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- ==================== ПЕРІОДИ ==================== -->
     <div class="column">
         <h2>📅 Періоди допомоги</h2>
 
         <div class="content-grid">
-
+            <!-- Форма додавання -->
             <div>
                 <form action="/addPeriod" method="post">
                     <div>
                         <div class="label">Назва періоду</div>
-                        <input type="text" name="periodName" placeholder="2022 Q1-Q2" required>
+                        <input type="text" name="periodName" placeholder="2022 Q1-Q2" required minlength="2" maxlength="100">
                     </div>
                     <div>
                         <div class="label">Країна</div>
                         <select name="countryId" required>
                             <option value="" disabled selected>Оберіть країну</option>
-                            <option th:each="country : ${countries}"
-                                    th:value="${country.id}"
-                                    th:text="${country.name}">Country</option>
+                            <option th:each="c : ${@countryService.getAllCountries()}"
+                                    th:value="${c.id}"
+                                    th:text="${c.name}">Country</option>
                         </select>
                     </div>
                     <div>
@@ -103,92 +145,173 @@
                     </div>
                     <div>
                         <div class="label">Сума допомоги (USD)</div>
-                        <input type="number" name="aidAmountUsd" placeholder="15000000000" required>
+                        <input type="number" name="aidAmountUsd" placeholder="15000000000" required min="0" step="0.01">
                     </div>
-                    <button type="submit">Додати Період</button>
+                    <button type="submit">➕ Додати Період</button>
+                </form>
+
+                <!-- Форма пошуку -->
+                <form method="get" action="/" style="margin-top: 20px; background: rgba(0,102,255,0.1);">
+                    <div>
+                        <div class="label">🔍 Пошук періоду</div>
+                        <input type="text"
+                               name="searchPeriod"
+                               placeholder="Введіть назву періоду або країни..."
+                               th:value="${searchPeriod}">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" style="flex: 1;">Шукати</button>
+                        <a th:href="@{/}" class="edit-btn" style="flex: 1; display: flex; align-items: center; justify-content: center; text-decoration: none;">Скинути</a>
+                    </div>
                 </form>
             </div>
 
+            <!-- Результати пошуку -->
             <div>
-                <ul>
-                    <li th:each="period : ${periods}">
-                        <div class="item-info">
-                            <div class="item-name" th:text="${period.periodName}">2022 Q1-Q2</div>
-                            <div class="item-details">
-                                Країна: <span th:text="${period.country.name}">USA</span><br>
-                                Період: <span th:text="${period.startDate}">2022-01-01</span> -
-                                <span th:text="${period.endDate != null ? period.endDate : 'Ongoing'}">2022-06-30</span><br>
-                                Сума: $<span th:text="${#numbers.formatDecimal(period.aidAmountUsd, 0, 'COMMA', 0, 'POINT')}">15,000,000,000</span>
+                <!-- Показуємо тільки якщо є пошук -->
+                <div th:if="${searchPeriod != null and !searchPeriod.isEmpty()}">
+                    <div style="padding: 10px; background: rgba(0,102,255,0.2); border-radius: 8px; margin-bottom: 15px;">
+                        <p style="color: #00ccff; margin: 0; font-weight: bold;">
+                            Результати пошуку: <span th:text="${periods.size()}">0</span> записів
+                        </p>
+                    </div>
+
+                    <!-- Список знайдених періодів -->
+                    <ul th:if="${!periods.isEmpty()}">
+                        <li th:each="period : ${periods}">
+                            <div class="item-info">
+                                <div class="item-name" th:text="${period.periodName}">2022 Q1-Q2</div>
+                                <div class="item-details">
+                                    Країна: <span th:text="${period.country.name}">USA</span><br>
+                                    Період: <span th:text="${period.startDate}">2022-01-01</span> -
+                                    <span th:text="${period.endDate != null ? period.endDate : 'Ongoing'}">2022-06-30</span><br>
+                                    Сума: $<span th:text="${#numbers.formatDecimal(period.aidAmountUsd, 0, 'COMMA', 0, 'POINT')}">15,000,000,000</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="item-actions">
-                            <a th:href="@{/editPeriod/{id}(id=${period.id})}" class="edit-btn">Редагувати</a>
-                            <a th:href="@{/deletePeriod/{id}(id=${period.id})}" class="delete-btn">Видалити</a>
-                        </div>
-                    </li>
-                </ul>
+                            <div class="item-actions">
+                                <a th:href="@{/editPeriod/{id}(id=${period.id})}" class="edit-btn">Редагувати</a>
+                                <a th:href="@{/deletePeriod/{id}(id=${period.id})}" class="delete-btn">Видалити</a>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <!-- Повідомлення про відсутність результатів -->
+                    <div th:if="${periods.isEmpty()}" style="padding: 15px; background: rgba(255,107,107,0.1); border-radius: 8px; text-align: center;">
+                        <p style="color: #ff6b6b; margin: 0;">
+                            ❌ Періодів не знайдено за запитом "<span th:text="${searchPeriod}"></span>"
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Підказка коли немає пошуку -->
+                <div th:if="${searchPeriod == null or searchPeriod.isEmpty()}" style="padding: 20px; background: rgba(255,255,255,0.03); border-radius: 8px; text-align: center;">
+                    <p style="color: #bbb; margin: 0;">
+                        💡 Використовуйте пошук для відображення періодів
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- ==================== ЗБРОЯ ==================== -->
     <div class="column">
         <h2>🔫 Передана зброя</h2>
 
         <div class="content-grid">
-
+            <!-- Форма додавання -->
             <div>
                 <form action="/addWeapon" method="post">
                     <div>
                         <div class="label">Тип зброї</div>
-                        <input type="text" name="weaponType" placeholder="Artillery" required>
+                        <input type="text" name="weaponType" placeholder="Artillery" required minlength="2" maxlength="100">
                     </div>
                     <div>
                         <div class="label">Назва зброї</div>
-                        <input type="text" name="weaponName" placeholder="M777 Howitzer" required>
+                        <input type="text" name="weaponName" placeholder="M777 Howitzer" required minlength="2" maxlength="200">
                     </div>
                     <div>
                         <div class="label">Період</div>
                         <select name="periodId" required>
                             <option value="" disabled selected>Оберіть період</option>
-                            <option th:each="period : ${periods}"
-                                    th:value="${period.id}"
-                                    th:text="${period.periodName + ' (' + period.country.name + ')'}">Period</option>
+                            <option th:each="p : ${@periodService.getAllPeriods()}"
+                                    th:value="${p.id}"
+                                    th:text="${p.periodName + ' (' + p.country.name + ')'}">Period</option>
                         </select>
                     </div>
                     <div>
                         <div class="label">Кількість одиниць</div>
-                        <input type="number" name="quantity" placeholder="90" required>
+                        <input type="number" name="quantity" placeholder="90" required min="1" max="1000000">
                     </div>
                     <div>
                         <div class="label">Вартість одиниці (USD)</div>
-                        <input type="number" name="unitCostUsd" placeholder="2500000" required>
+                        <input type="number" name="unitCostUsd" placeholder="2500000" required min="0" step="0.01">
                     </div>
                     <div>
                         <div class="label">Загальна вартість (USD)</div>
-                        <input type="number" name="totalCostUsd" placeholder="225000000" required>
+                        <input type="number" name="totalCostUsd" placeholder="225000000" required min="0" step="0.01">
                     </div>
-                    <button type="submit">Додати Зброю</button>
+                    <button type="submit">➕ Додати Зброю</button>
+                </form>
+
+                <!-- Форма пошуку -->
+                <form method="get" action="/" style="margin-top: 20px; background: rgba(0,102,255,0.1);">
+                    <div>
+                        <div class="label">🔍 Пошук зброї</div>
+                        <input type="text"
+                               name="searchWeapon"
+                               placeholder="Введіть назву або тип зброї..."
+                               th:value="${searchWeapon}">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" style="flex: 1;">Шукати</button>
+                        <a th:href="@{/}" class="edit-btn" style="flex: 1; display: flex; align-items: center; justify-content: center; text-decoration: none;">Скинути</a>
+                    </div>
                 </form>
             </div>
 
+            <!-- Результати пошуку -->
             <div>
-                <ul>
-                    <li th:each="weapon : ${weapons}">
-                        <div class="item-info">
-                            <div class="item-name" th:text="${weapon.weaponName}">M777 Howitzer</div>
-                            <div class="item-details">
-                                Тип: <span th:text="${weapon.weaponType}">Artillery</span><br>
-                                Період: <span th:text="${weapon.period.periodName}">2022 Q1-Q2</span><br>
-                                Кількість: <span th:text="${weapon.quantity}">90</span> шт.<br>
-                                Загальна вартість: $<span th:text="${#numbers.formatDecimal(weapon.totalCostUsd, 0, 'COMMA', 0, 'POINT')}">225,000,000</span>
+                <!-- Показуємо тільки якщо є пошук -->
+                <div th:if="${searchWeapon != null and !searchWeapon.isEmpty()}">
+                    <div style="padding: 10px; background: rgba(0,102,255,0.2); border-radius: 8px; margin-bottom: 15px;">
+                        <p style="color: #00ccff; margin: 0; font-weight: bold;">
+                            Результати пошуку: <span th:text="${weapons.size()}">0</span> записів
+                        </p>
+                    </div>
+
+                    <!-- Список знайденої зброї -->
+                    <ul th:if="${!weapons.isEmpty()}">
+                        <li th:each="weapon : ${weapons}">
+                            <div class="item-info">
+                                <div class="item-name" th:text="${weapon.weaponName}">M777 Howitzer</div>
+                                <div class="item-details">
+                                    Тип: <span th:text="${weapon.weaponType}">Artillery</span><br>
+                                    Період: <span th:text="${weapon.period.periodName}">2022 Q1-Q2</span><br>
+                                    Кількість: <span th:text="${weapon.quantity}">90</span> шт.<br>
+                                    Загальна вартість: $<span th:text="${#numbers.formatDecimal(weapon.totalCostUsd, 0, 'COMMA', 0, 'POINT')}">225,000,000</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="item-actions">
-                            <a th:href="@{/editWeapon/{id}(id=${weapon.id})}" class="edit-btn">Редагувати</a>
-                            <a th:href="@{/deleteWeapon/{id}(id=${weapon.id})}" class="delete-btn">Видалити</a>
-                        </div>
-                    </li>
-                </ul>
+                            <div class="item-actions">
+                                <a th:href="@{/editWeapon/{id}(id=${weapon.id})}" class="edit-btn">Редагувати</a>
+                                <a th:href="@{/deleteWeapon/{id}(id=${weapon.id})}" class="delete-btn">Видалити</a>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <!-- Повідомлення про відсутність результатів -->
+                    <div th:if="${weapons.isEmpty()}" style="padding: 15px; background: rgba(255,107,107,0.1); border-radius: 8px; text-align: center;">
+                        <p style="color: #ff6b6b; margin: 0;">
+                            ❌ Зброї не знайдено за запитом "<span th:text="${searchWeapon}"></span>"
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Підказка коли немає пошуку -->
+                <div th:if="${searchWeapon == null or searchWeapon.isEmpty()}" style="padding: 20px; background: rgba(255,255,255,0.03); border-radius: 8px; text-align: center;">
+                    <p style="color: #bbb; margin: 0;">
+                        💡 Використовуйте пошук для відображення зброї
+                    </p>
+                </div>
             </div>
         </div>
     </div>

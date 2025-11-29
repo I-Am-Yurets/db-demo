@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<div class="container" style="max-width: 600px; margin: 50px auto;">
+<div class="container" style="max-width: 400px; margin: 50px auto;">
     <div class="column">
         <h2>✏️ Редагувати Зброю</h2>
 
@@ -42,12 +42,12 @@
 
             <div>
                 <div class="label">Вартість одиниці (USD)</div>
-                <input type="number" name="unitCostUsd" th:value="${weapon.unitCostUsd}" required>
+                <input type="number" name="unitCostUsd" th:value="${#numbers.formatDecimal(weapon.unitCostUsd, 0, 'NONE', 0, 'NONE')}" required>
             </div>
 
             <div>
                 <div class="label">Загальна вартість (USD)</div>
-                <input type="number" name="totalCostUsd" th:value="${weapon.totalCostUsd}" required>
+                <input type="number" name="totalCostUsd" th:value="${#numbers.formatDecimal(weapon.totalCostUsd, 0, 'NONE', 0, 'NONE')}" required>
             </div>
 
             <div style="display: flex; gap: 10px; margin-top: 10px;">
