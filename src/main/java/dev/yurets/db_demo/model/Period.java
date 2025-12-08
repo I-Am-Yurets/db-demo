@@ -1,5 +1,7 @@
 package dev.yurets.db_demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -35,13 +37,15 @@ public class Period {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id", nullable = false)
+    @JsonIgnore // Ігноруємо при серіалізації, щоб уникнути циклу
     private Country country;
 
     /**
      * Зв'язок "Один-до-Багатьох" зі зброєю
-     * cascade = CascadeType.ALL: видалення періоду → видалення всієї зброї
+     * @JsonIgnore - запобігає циклічній серіалізації JSON
      */
     @OneToMany(mappedBy = "period", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<Weapon> weapons;
 
     // Конструктор за замовчуванням (необхідний для JPA)

@@ -1,15 +1,22 @@
 package dev.yurets.db_demo;
 
 import dev.yurets.db_demo.model.Country;
+import dev.yurets.db_demo.model.Donor;
 import dev.yurets.db_demo.model.Period;
+import dev.yurets.db_demo.model.User;
 import dev.yurets.db_demo.model.Weapon;
+import dev.yurets.db_demo.model.WeaponDelivery;
 import dev.yurets.db_demo.repository.CountryRepository;
+import dev.yurets.db_demo.repository.DonorRepository;
 import dev.yurets.db_demo.repository.PeriodRepository;
+import dev.yurets.db_demo.repository.UserRepository;
+import dev.yurets.db_demo.repository.WeaponDeliveryRepository;
 import dev.yurets.db_demo.repository.WeaponRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -20,18 +27,64 @@ public class MilitaryAidApplication {
     public static void main(String[] args) {
         SpringApplication.run(MilitaryAidApplication.class, args);
 
-        System.out.println("\n--- ВЕБ-ДОДАТОК ВІЙСЬКОВОЇ ДОПОМОГИ УСПІШНО ЗАПУЩЕНО! ---");
-        System.out.println("Відкрийте браузер і перейдіть на: http://localhost:8080");
+        System.out.println("\n╔══════════════════════════════════════════════════════════╗");
+        System.out.println("║   🎖️  ВЕБ-ЗАСТОСУНОК ВІЙСЬКОВОЇ ДОПОМОГИ ЗАПУЩЕНО!   ║");
+        System.out.println("╚══════════════════════════════════════════════════════════╝");
+        System.out.println("\n📱 Веб-інтерфейс: http://localhost:8080");
+        System.out.println("🔐 Сторінка логіну: http://localhost:8080/login");
+        System.out.println("\n👤 Тестові користувачі:");
+        System.out.println("   ADMIN: admin / admin (повний доступ)");
+        System.out.println("   USER:  user / user   (тільки перегляд)");
+        System.out.println("\n🔗 REST API Endpoints:");
+        System.out.println("   GET    http://localhost:8080/api/countries");
+        System.out.println("   GET    http://localhost:8080/api/periods");
+        System.out.println("   GET    http://localhost:8080/api/weapons");
+        System.out.println("   (POST/PUT/DELETE доступні тільки для ADMIN)");
+        System.out.println("\n💡 Для тестування використовуйте:");
+        System.out.println("   - Браузер (для GET запитів)");
+        System.out.println("   - curl або Postman (для всіх методів)");
+        System.out.println("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
     }
 
     @Bean
     public CommandLineRunner loadInitialData(CountryRepository countryRepo,
                                              PeriodRepository periodRepo,
-                                             WeaponRepository weaponRepo) {
+                                             WeaponRepository weaponRepo,
+                                             UserRepository userRepo,
+                                             DonorRepository donorRepo,
+                                             WeaponDeliveryRepository deliveryRepo,
+                                             PasswordEncoder passwordEncoder) {
         return (args) -> {
             System.out.println("\n--- [INIT] Початкове завантаження даних ---");
 
-            // Перевіримо, чи база порожня, щоб не дублювати дані при перезапуску
+            // ========== СТВОРЕННЯ КОРИСТУВАЧІВ ==========
+            if (userRepo.count() == 0) {
+                System.out.println("[INIT] Створення користувачів...");
+
+                // ADMIN: admin / admin (повний доступ)
+                User admin = new User(
+                        "admin",
+                        passwordEncoder.encode("admin"), // BCrypt хеш
+                        "ADMIN"
+                );
+                userRepo.save(admin);
+
+                // USER: user / user (тільки перегляд)
+                User user = new User(
+                        "user",
+                        passwordEncoder.encode("user"), // BCrypt хеш
+                        "USER"
+                );
+                userRepo.save(user);
+
+                System.out.println("[INIT] ✅ Користувачі створено:");
+                System.out.println("       - admin/admin (ADMIN)");
+                System.out.println("       - user/user (USER)");
+            } else {
+                System.out.println("[INIT] Користувачі вже існують.");
+            }
+
+            // ========== СТВОРЕННЯ ДАНИХ (країни, періоди, зброя) ==========
             if (countryRepo.count() > 0) {
                 System.out.println("[INIT] Дані вже існують. Пропускаємо ініціалізацію.");
                 return;
@@ -46,7 +99,7 @@ public class MilitaryAidApplication {
             countryRepo.save(usa);
             countryRepo.save(germany);
             countryRepo.save(uk);
-            System.out.println("[INIT] Країни створено.");
+            System.out.println("[INIT] ✅ Країни створено.");
 
             // --- Створюємо Періоди (3) ---
             System.out.println("[INIT] Створення періодів...");
@@ -77,7 +130,7 @@ public class MilitaryAidApplication {
             periodRepo.save(usaPeriod1);
             periodRepo.save(usaPeriod2);
             periodRepo.save(germanyPeriod);
-            System.out.println("[INIT] Періоди створено.");
+            System.out.println("[INIT] ✅ Періоди створено.");
 
             // --- Створюємо Зброю (3) ---
             System.out.println("[INIT] Створення записів зброї...");
@@ -111,9 +164,54 @@ public class MilitaryAidApplication {
             weaponRepo.save(howitzer);
             weaponRepo.save(javelin);
             weaponRepo.save(leopard);
-            System.out.println("[INIT] Зброя додана.");
+            System.out.println("[INIT] ✅ Зброя додана.");
 
-            System.out.println("--- [INIT] Початкове завантаження даних ЗАВЕРШЕНО ---");
+            // --- Створюємо Донорів (3) ---
+            System.out.println("[INIT] Створення донорів...");
+            Donor pentagon = new Donor("Pentagon", "урядова", "defense@us.gov", usa);
+            Donor usaid = new Donor("US Agency for International Development", "урядова", "contact@usaid.gov", usa);
+            Donor bundeswehr = new Donor("Bundeswehr", "урядова", "info@bundeswehr.de", germany);
+
+            donorRepo.save(pentagon);
+            donorRepo.save(usaid);
+            donorRepo.save(bundeswehr);
+            System.out.println("[INIT] ✅ Донори створено.");
+
+            // --- Створюємо Поставки (3) ---
+            System.out.println("[INIT] Створення поставок...");
+            WeaponDelivery delivery1 = new WeaponDelivery(
+                    LocalDate.of(2022, 3, 15),
+                    45,
+                    "delivered",
+                    "USA-HOW-001",
+                    howitzer,
+                    pentagon
+            );
+
+            WeaponDelivery delivery2 = new WeaponDelivery(
+                    LocalDate.of(2022, 4, 20),
+                    2500,
+                    "delivered",
+                    "USA-JAV-002",
+                    javelin,
+                    usaid
+            );
+
+            WeaponDelivery delivery3 = new WeaponDelivery(
+                    LocalDate.of(2023, 1, 10),
+                    18,
+                    "delivered",
+                    "DE-LEO-003",
+                    leopard,
+                    bundeswehr
+            );
+
+            deliveryRepo.save(delivery1);
+            deliveryRepo.save(delivery2);
+            deliveryRepo.save(delivery3);
+            System.out.println("[INIT] ✅ Поставки створено.");
+
+            System.out.println("--- [INIT] ✅ Початкове завантаження даних ЗАВЕРШЕНО ---\n");
         };
     }
 }

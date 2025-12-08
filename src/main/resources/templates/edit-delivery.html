@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редагувати Поставку</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<div class="container" style="max-width: 450px; margin: 50px auto;">
+    <div class="column">
+        <h2>✏️ Редагувати Поставку</h2>
+
+        <form th:action="@{/updateDelivery}" method="post">
+            <input type="hidden" name="id" th:value="${delivery.id}">
+
+            <div>
+                <div class="label">Зброя</div>
+                <select name="weaponId" required>
+                    <option th:each="weapon : ${weapons}"
+                            th:value="${weapon.id}"
+                            th:text="${weapon.weaponName + ' (' + weapon.weaponType + ')'}"
+                            th:selected="${weapon.id == delivery.weapon.id}">Weapon</option>
+                </select>
+            </div>
+
+            <div>
+                <div class="label">Донор (Організація)</div>
+                <select name="donorId" required>
+                    <option th:each="donor : ${donors}"
+                            th:value="${donor.id}"
+                            th:text="${donor.organizationName + ' (' + donor.country.name + ')'}"
+                            th:selected="${donor.id == delivery.donor.id}">Donor</option>
+                </select>
+            </div>
+
+            <div>
+                <div class="label">Дата поставки</div>
+                <input type="date" name="deliveryDate" th:value="${delivery.deliveryDate}" required>
+            </div>
+
+            <div>
+                <div class="label">Кількість одиниць</div>
+                <input type="number" name="quantityDelivered" th:value="${delivery.quantityDelivered}" required min="1">
+            </div>
+
+            <div>
+                <div class="label">Статус поставки</div>
+                <select name="deliveryStatus" required>
+                    <option value="planned" th:selected="${delivery.deliveryStatus == 'planned'}">Заплановано</option>
+                    <option value="in_transit" th:selected="${delivery.deliveryStatus == 'in_transit'}">У дорозі</option>
+                    <option value="delivered" th:selected="${delivery.deliveryStatus == 'delivered'}">Доставлено</option>
+                </select>
+            </div>
+
+            <div>
+                <div class="label">Номер відстеження (опціонально)</div>
+                <input type="text" name="trackingNumber" th:value="${delivery.trackingNumber}" maxlength="100">
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button type="submit" style="flex: 1;">Зберегти зміни</button>
+                <a href="/" class="edit-btn" style="flex: 1; text-align: center; display: flex; align-items: center; justify-content: center; text-decoration: none;">Скасувати</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

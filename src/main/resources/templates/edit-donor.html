@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редагувати Донора</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<div class="container" style="max-width: 450px; margin: 50px auto;">
+    <div class="column">
+        <h2>✏️ Редагувати Донора</h2>
+
+        <form th:action="@{/updateDonor}" method="post">
+            <input type="hidden" name="id" th:value="${donor.id}">
+
+            <div>
+                <div class="label">Назва організації</div>
+                <input type="text" name="organizationName" th:value="${donor.organizationName}" required minlength="2" maxlength="200">
+            </div>
+
+            <div>
+                <div class="label">Тип організації</div>
+                <select name="organizationType" required>
+                    <option value="урядова" th:selected="${donor.organizationType == 'урядова'}">Урядова</option>
+                    <option value="міжнародна" th:selected="${donor.organizationType == 'міжнародна'}">Міжнародна</option>
+                    <option value="приватна" th:selected="${donor.organizationType == 'приватна'}">Приватна</option>
+                </select>
+            </div>
+
+            <div>
+                <div class="label">Контактна інформація (опціонально)</div>
+                <input type="text" name="contactInfo" th:value="${donor.contactInfo}" maxlength="200">
+            </div>
+
+            <div>
+                <div class="label">Країна</div>
+                <select name="countryId" required>
+                    <option th:each="country : ${countries}"
+                            th:value="${country.id}"
+                            th:text="${country.name}"
+                            th:selected="${country.id == donor.country.id}">Country</option>
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button type="submit" style="flex: 1;">Зберегти зміни</button>
+                <a href="/" class="edit-btn" style="flex: 1; text-align: center; display: flex; align-items: center; justify-content: center; text-decoration: none;">Скасувати</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

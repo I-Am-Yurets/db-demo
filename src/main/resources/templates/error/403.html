@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 - Доступ заборонено</title>
+    <link rel="stylesheet" th:href="@{/css/errors.css}">
+</head>
+<body>
+
+<div class="error-container">
+    <div class="error-box">
+        <div class="error-code error-403">403</div>
+        <h1>Доступ заборонено</h1>
+        <p>Вибачте, у вас немає прав для перегляду цієї сторінки або виконання цієї дії.</p>
+        <p>Ця функція доступна тільки для користувачів з роллю <strong>ADMIN</strong>.</p>
+
+        <div class="actions">
+            <a href="/viewAll" class="btn btn-primary">📊 Перегляд даних</a>
+            <a href="/login" class="btn btn-secondary">🔄 Змінити акаунт</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

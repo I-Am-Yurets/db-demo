@@ -1,5 +1,7 @@
 package dev.yurets.db_demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Set;
@@ -24,10 +26,10 @@ public class Country {
 
     /**
      * Зв'язок "Один-до-Багатьох" з періодами
-     * cascade = CascadeType.ALL: видалення країни → видалення всіх періодів
-     * orphanRemoval = true: видалення періоду зі списку → видалення з БД
+     * @JsonIgnore - запобігає циклічній серіалізації JSON
      */
     @OneToMany(mappedBy = "country", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<Period> periods;
 
     // Конструктор за замовчуванням (необхідний для JPA)

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вхід у систему</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+
+<div class="login-container">
+    <div class="login-box">
+        <h1>🎖️ Система військової допомоги</h1>
+        <h2>Вхід у систему</h2>
+
+        <!-- Повідомлення про помилку -->
+        <div th:if="${param.error}" class="alert alert-error">
+            ❌ Невірний логін або пароль
+        </div>
+
+        <!-- Повідомлення про успішний вихід -->
+        <div th:if="${param.logout}" class="alert alert-success">
+            ✅ Ви успішно вийшли з системи
+        </div>
+
+        <form th:action="@{/login}" method="post" class="login-form">
+            <div class="form-group">
+                <label for="username">Логін</label>
+                <input type="text"
+                       id="username"
+                       name="username"
+                       placeholder="admin або user"
+                       required
+                       autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Пароль</label>
+                <input type="password"
+                       id="password"
+                       name="password"
+                       placeholder="Введіть пароль"
+                       required>
+            </div>
+
+            <button type="submit" class="btn-login">Увійти</button>
+        </form>
+
+        <div class="info-box">
+            <h3>📋 Тестові облікові дані:</h3>
+            <div class="credentials">
+                <div class="credential-item">
+                    <strong>ADMIN:</strong> admin / admin
+                    <span class="badge admin">Повний доступ</span>
+                </div>
+                <div class="credential-item">
+                    <strong>USER:</strong> user / user
+                    <span class="badge user">Тільки перегляд</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2025 Military Aid System. Розроблено для навчальних цілей.</p>
+    </div>
+</div>
+
+</body>
+</html>

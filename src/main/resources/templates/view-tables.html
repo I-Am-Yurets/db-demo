@@ -1,55 +1,36 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📊 Перегляд усіх даних (Табличний формат)</title>
+    <title>📊 Перегляд усіх даних</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
-    <style>
-        /* Додаткові стилі для таблиць, щоб вони відповідали загальному дизайну */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 8px;
-            overflow: hidden; /* Для коректного відображення border-radius */
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        }
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        th {
-            background-color: rgba(0, 102, 255, 0.2);
-            color: #00ccff;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        tr:hover {
-            background-color: rgba(255,255,255,0.06);
-        }
-        .text-right {
-            text-align: right;
-        }
-        .table-actions a {
-            /* Використовуємо існуючі стилі кнопок */
-            margin-right: 5px;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/tables.css}">
 </head>
 <body>
 
+<!-- Верхня панель з інформацією про користувача -->
+<div class="top-bar">
+    <div class="user-info">
+        <span>Ви увійшли як: <strong sec:authentication="name">User</strong></span>
+        <span class="badge" sec:authorize="hasAuthority('ADMIN')">ADMIN</span>
+        <span class="badge user-badge" sec:authorize="hasAuthority('USER')">USER</span>
+    </div>
+    <div class="nav-links">
+        <a href="/" sec:authorize="hasAuthority('ADMIN')" class="nav-link">✏️ Редагування</a>
+        <a href="/logout" class="nav-link logout">🚪 Вийти</a>
+    </div>
+</div>
+
 <h1>📊 Детальний перегляд військової допомоги</h1>
 <p class="subtitle">
-    Повне відображення всіх записів у форматі таблиці.<br>
-    <a href="/" class="edit-btn" style="text-decoration: none;">← Повернутися на головну (редагування/додавання)</a>
+    Повне відображення всіх записів у форматі таблиці (режим Read-Only)
 </p>
 
 <div class="container-rows">
 
+    <!-- ==================== КРАЇНИ ==================== -->
     <div class="column">
         <h2>🌍 Країни-донори</h2>
         <table>
@@ -58,7 +39,8 @@
                 <th>ID</th>
                 <th>Назва країни</th>
                 <th class="text-right">Загальна допомога (USD)</th>
-                <th>Дії</th>
+                <!-- Колонка "Дії" тільки для ADMIN -->
+                <th sec:authorize="hasAuthority('ADMIN')">Дії</th>
             </tr>
             </thead>
             <tbody>
@@ -66,15 +48,16 @@
                 <td th:text="${country.id}">1</td>
                 <td th:text="${country.name}">USA</td>
                 <td class="text-right" th:text="${#numbers.formatDecimal(country.totalAidUsd, 0, 'COMMA', 0, 'POINT')}">75,000,000,000</td>
-                <td class="table-actions">
-                    <a th:href="@{/editCountry/{id}(id=${country.id})}" class="edit-btn" style="padding: 4px 8px;">Edit</a>
-                    <a th:href="@{/deleteCountry/{id}(id=${country.id})}" class="delete-btn" style="padding: 4px 8px;">Delete</a>
+                <td class="table-actions" sec:authorize="hasAuthority('ADMIN')">
+                    <a th:href="@{/editCountry/{id}(id=${country.id})}" class="edit-btn">Edit</a>
+                    <a th:href="@{/deleteCountry/{id}(id=${country.id})}" class="delete-btn">Delete</a>
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
 
+    <!-- ==================== ПЕРІОДИ ==================== -->
     <div class="column">
         <h2>📅 Періоди допомоги</h2>
         <table>
@@ -86,7 +69,7 @@
                 <th>Дата початку</th>
                 <th>Дата закінчення</th>
                 <th class="text-right">Сума (USD)</th>
-                <th>Дії</th>
+                <th sec:authorize="hasAuthority('ADMIN')">Дії</th>
             </tr>
             </thead>
             <tbody>
@@ -97,15 +80,16 @@
                 <td th:text="${period.startDate}">2022-01-01</td>
                 <td th:text="${period.endDate != null ? period.endDate : 'Ongoing'}">2022-06-30</td>
                 <td class="text-right" th:text="${#numbers.formatDecimal(period.aidAmountUsd, 0, 'COMMA', 0, 'POINT')}">15,000,000,000</td>
-                <td class="table-actions">
-                    <a th:href="@{/editPeriod/{id}(id=${period.id})}" class="edit-btn" style="padding: 4px 8px;">Edit</a>
-                    <a th:href="@{/deletePeriod/{id}(id=${period.id})}" class="delete-btn" style="padding: 4px 8px;">Delete</a>
+                <td class="table-actions" sec:authorize="hasAuthority('ADMIN')">
+                    <a th:href="@{/editPeriod/{id}(id=${period.id})}" class="edit-btn">Edit</a>
+                    <a th:href="@{/deletePeriod/{id}(id=${period.id})}" class="delete-btn">Delete</a>
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
 
+    <!-- ==================== ЗБРОЯ ==================== -->
     <div class="column">
         <h2>🔫 Передана зброя</h2>
         <table>
@@ -117,7 +101,7 @@
                 <th>Період</th>
                 <th class="text-right">Кількість</th>
                 <th class="text-right">Загальна вартість (USD)</th>
-                <th>Дії</th>
+                <th sec:authorize="hasAuthority('ADMIN')">Дії</th>
             </tr>
             </thead>
             <tbody>
@@ -128,15 +112,120 @@
                 <td th:text="${weapon.period.periodName}">2022 Q1-Q2</td>
                 <td class="text-right" th:text="${weapon.quantity}">90</td>
                 <td class="text-right" th:text="${#numbers.formatDecimal(weapon.totalCostUsd, 0, 'COMMA', 0, 'POINT')}">225,000,000</td>
-                <td class="table-actions">
-                    <a th:href="@{/editWeapon/{id}(id=${weapon.id})}" class="edit-btn" style="padding: 4px 8px;">Edit</a>
-                    <a th:href="@{/deleteWeapon/{id}(id=${weapon.id})}" class="delete-btn" style="padding: 4px 8px;">Delete</a>
+                <td class="table-actions" sec:authorize="hasAuthority('ADMIN')">
+                    <a th:href="@{/editWeapon/{id}(id=${weapon.id})}" class="edit-btn">Edit</a>
+                    <a th:href="@{/deleteWeapon/{id}(id=${weapon.id})}" class="delete-btn">Delete</a>
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
 
+    <!-- ==================== ДОНОРИ ==================== -->
+    <div class="column">
+        <h2>🏢 Донори (Організації)</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Назва організації</th>
+                <th>Тип</th>
+                <th>Країна</th>
+                <th>Контакт</th>
+                <th sec:authorize="hasAuthority('ADMIN')">Дії</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="donor : ${donors}">
+                <td th:text="${donor.id}">1</td>
+                <td th:text="${donor.organizationName}">Pentagon</td>
+                <td th:text="${donor.organizationType}">урядова</td>
+                <td th:text="${donor.country.name}">USA</td>
+                <td th:text="${donor.contactInfo}">defense@us.gov</td>
+                <td class="table-actions" sec:authorize="hasAuthority('ADMIN')">
+                    <a th:href="@{/editDonor/{id}(id=${donor.id})}" class="edit-btn">Edit</a>
+                    <a th:href="@{/deleteDonor/{id}(id=${donor.id})}" class="delete-btn">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ==================== ПОСТАВКИ ==================== -->
+    <div class="column">
+        <h2>📦 Поставки зброї</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Зброя</th>
+                <th>Донор</th>
+                <th>Дата</th>
+                <th class="text-right">Кількість</th>
+                <th>Статус</th>
+                <th>Трекінг</th>
+                <th sec:authorize="hasAuthority('ADMIN')">Дії</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="delivery : ${deliveries}">
+                <td th:text="${delivery.id}">1</td>
+                <td th:text="${delivery.weapon.weaponName}">M777 Howitzer</td>
+                <td th:text="${delivery.donor.organizationName}">Pentagon</td>
+                <td th:text="${delivery.deliveryDate}">2022-03-15</td>
+                <td class="text-right" th:text="${delivery.quantityDelivered}">45</td>
+                <td>
+                    <span th:if="${delivery.deliveryStatus == 'planned'}" style="color: #ffc107;">Заплановано</span>
+                    <span th:if="${delivery.deliveryStatus == 'in_transit'}" style="color: #00ccff;">У дорозі</span>
+                    <span th:if="${delivery.deliveryStatus == 'delivered'}" style="color: #90ee90;">Доставлено</span>
+                </td>
+                <td th:text="${delivery.trackingNumber}">USA-HOW-001</td>
+                <td class="table-actions" sec:authorize="hasAuthority('ADMIN')">
+                    <a th:href="@{/editDelivery/{id}(id=${delivery.id})}" class="edit-btn">Edit</a>
+                    <a th:href="@{/deleteDelivery/{id}(id=${delivery.id})}" class="delete-btn">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- ==================== REST API ІНФОРМАЦІЯ ==================== -->
+<div class="api-info" sec:authorize="hasAuthority('ADMIN')">
+    <h3>🔗 REST API Endpoints (доступні для інтеграції):</h3>
+    <div class="endpoint-list">
+        <div class="endpoint-item">
+            <span class="method get">GET</span>
+            <code>/api/countries</code>
+            <span class="desc">Отримати всі країни</span>
+        </div>
+        <div class="endpoint-item">
+            <span class="method get">GET</span>
+            <code>/api/periods</code>
+            <span class="desc">Отримати всі періоди</span>
+        </div>
+        <div class="endpoint-item">
+            <span class="method get">GET</span>
+            <code>/api/weapons</code>
+            <span class="desc">Отримати всю зброю</span>
+        </div>
+        <div class="endpoint-item">
+            <span class="method post">POST</span>
+            <code>/api/countries</code>
+            <span class="desc">Створити країну (ADMIN)</span>
+        </div>
+        <div class="endpoint-item">
+            <span class="method put">PUT</span>
+            <code>/api/countries/{id}</code>
+            <span class="desc">Оновити країну (ADMIN)</span>
+        </div>
+        <div class="endpoint-item">
+            <span class="method delete">DELETE</span>
+            <code>/api/countries/{id}</code>
+            <span class="desc">Видалити країну (ADMIN)</span>
+        </div>
+    </div>
 </div>
 
 </body>

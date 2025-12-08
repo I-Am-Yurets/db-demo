@@ -1,0 +1,216 @@
+/* ==========================================
+   ДОДАТКОВІ СТИЛІ ДЛЯ ТАБЛИЦЬ
+   ========================================== */
+
+/* Верхня панель */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 15px 30px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #bbb;
+}
+
+.user-info strong {
+    color: #90ee90;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    background: rgba(0, 204, 255, 0.2);
+    color: #00ccff;
+    border: 1px solid rgba(0, 204, 255, 0.3);
+}
+
+.badge.user-badge {
+    background: rgba(144, 238, 144, 0.2);
+    color: #90ee90;
+    border: 1px solid rgba(144, 238, 144, 0.3);
+}
+
+.nav-links {
+    display: flex;
+    gap: 15px;
+}
+
+.nav-link {
+    padding: 8px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #e0e0e0;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s;
+    font-size: 14px;
+}
+
+.nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.nav-link.logout {
+    background: rgba(255, 107, 107, 0.2);
+    border-color: rgba(255, 107, 107, 0.3);
+    color: #ff6b6b;
+}
+
+.nav-link.logout:hover {
+    background: rgba(255, 107, 107, 0.3);
+}
+
+/* Таблиці */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+th {
+    background-color: rgba(0, 102, 255, 0.2);
+    color: #00ccff;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+tr:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+.text-right {
+    text-align: right;
+}
+
+.table-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.table-actions a {
+    padding: 4px 10px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+
+/* REST API інформація */
+.api-info {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 25px;
+    margin: 30px auto;
+    max-width: 1000px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.api-info h3 {
+    color: #00ccff;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.endpoint-list {
+    display: grid;
+    gap: 10px;
+}
+
+.endpoint-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+    border-left: 3px solid #0066ff;
+}
+
+.method {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    min-width: 60px;
+    text-align: center;
+}
+
+.method.get {
+    background: rgba(144, 238, 144, 0.2);
+    color: #90ee90;
+}
+
+.method.post {
+    background: rgba(0, 204, 255, 0.2);
+    color: #00ccff;
+}
+
+.method.put {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+}
+
+.method.delete {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+}
+
+.endpoint-item code {
+    color: #90ee90;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    flex: 1;
+}
+
+.endpoint-item .desc {
+    color: #bbb;
+    font-size: 13px;
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+    .top-bar {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    table {
+        font-size: 12px;
+    }
+
+    th, td {
+        padding: 8px 10px;
+    }
+
+    .endpoint-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}

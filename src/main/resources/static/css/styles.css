@@ -49,14 +49,13 @@ h1 {
 
 .container-rows {
     display: flex;
-    flex-direction: column; /* ЗМІНА: Встановлюємо вертикальний напрямок */
+    flex-direction: column;
     gap: 20px;
-    max-width: 1000px; /* Трохи менша ширина, краща для вертикальних списків */
+    max-width: 1000px;
     margin: 0 auto;
 }
 
 .column {
-    /* flex: 1; - Залишаємо для .container, ігноруємо для .container-rows */
     background: rgba(255,255,255,0.05);
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.3);
@@ -65,22 +64,19 @@ h1 {
     border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Примусове застосування 100% ширини для колонок у вертикальних контейнерах */
 .container-rows .column {
     width: 100%;
     flex: none;
 }
 
 /* ------------------------------------------
-   НОВИЙ СТИЛЬ: СІТКА КОНТЕНТУ ВСЕРЕДИНІ КОЛОНКИ
+   СІТКА КОНТЕНТУ ВСЕРЕДИНІ КОЛОНКИ
    ------------------------------------------ */
 .content-grid {
     display: grid;
-    /* 2 стовпці: один для форми, другий для списку. */
     grid-template-columns: 1fr 1fr;
     gap: 20px;
 }
-/* ------------------------------------------ */
 
 /* ==========================================
    ЗАГОЛОВКИ КОЛОНОК
@@ -103,7 +99,7 @@ h2 {
 form {
     display: grid;
     gap: 12px;
-    margin-bottom: 0; /* Видаляємо нижній відступ форми, оскільки він тепер у content-grid */
+    margin-bottom: 0;
     padding: 15px;
     background: rgba(0,0,0,0.2);
     border-radius: 8px;
@@ -243,7 +239,6 @@ li:hover {
     border: 1px solid rgba(0, 204, 255, 0.3);
 }
 
-/* Стиль для кнопки "Скасувати" на сторінках редагування */
 .edit-btn.cancel {
     color: #e0e0e0;
     background: rgba(255, 255, 255, 0.05);
@@ -257,7 +252,6 @@ li:hover {
     box-shadow: 0 2px 8px rgba(0, 204, 255, 0.3);
 }
 
-/* Оновлені стилі для кнопки Delete (повернення до початкового вигляду) */
 .delete-btn {
     color: #ff6b6b;
     text-decoration: none;
@@ -272,6 +266,83 @@ li:hover {
 .delete-btn:hover {
     background: rgba(255, 107, 107, 0.2);
     text-decoration: none;
-    /* ВИЛУЧЕНО: transform: scale(1.05); */
     box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+}
+
+/* ==========================================
+   ТАБЛИЦІ (для view-tables.html)
+   ========================================== */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+th {
+    background-color: rgba(0, 102, 255, 0.2);
+    color: #00ccff;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+tr:hover {
+    background-color: rgba(255,255,255,0.06);
+}
+
+.text-right {
+    text-align: right;
+}
+
+.table-actions a {
+    margin-right: 5px;
+}
+
+/* ==========================================
+   ІНФОРМАЦІЯ ПРО КОРИСТУВАЧА
+   ========================================== */
+
+.user-info {
+    text-align: center;
+    padding: 15px;
+    background: rgba(144, 238, 144, 0.1);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(144, 238, 144, 0.3);
+}
+
+.user-info strong {
+    color: #90ee90;
+}
+
+/* ==========================================
+   АЛЕРТИ (повідомлення)
+   ========================================== */
+
+.alert {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
 }

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>401 - Потрібна авторизація</title>
+    <link rel="stylesheet" th:href="@{/css/errors.css}">
+</head>
+<body>
+
+<div class="error-container">
+    <div class="error-box">
+        <div class="error-code">401</div>
+        <h1>Потрібна авторизація</h1>
+        <p>Ви намагаєтеся отримати доступ до сторінки, яка вимагає входу в систему.</p>
+        <p>Будь ласка, авторизуйтесь для продовження.</p>
+
+        <div class="actions">
+            <a href="/login" class="btn btn-primary">🔐 Увійти в систему</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

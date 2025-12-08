@@ -1,5 +1,7 @@
 package dev.yurets.db_demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 
@@ -33,9 +35,11 @@ public class Weapon {
     /**
      * Зв'язок "Багато-до-Одного" з періодом
      * FetchType.LAZY: не завантажувати період, поки не попросять
+     * @JsonIgnore - запобігає циклічній серіалізації JSON
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "period_id", nullable = false)
+    @JsonIgnore
     private Period period;
 
     // Конструктор за замовчуванням (необхідний для JPA)

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -316,7 +316,244 @@
         </div>
     </div>
 
+    <!-- ==================== ДОНОРИ ==================== -->
+    <div class="column">
+        <h2>🏢 Донори (Організації)</h2>
+
+        <div class="content-grid">
+            <!-- Форма додавання -->
+            <div>
+                <form th:action="@{/addDonor}" method="post">
+                    <div>
+                        <div class="label">Назва організації</div>
+                        <input type="text" name="organizationName" placeholder="Pentagon" required minlength="2" maxlength="200">
+                    </div>
+
+                    <div>
+                        <div class="label">Тип організації</div>
+                        <select name="organizationType" required>
+                            <option value="" disabled selected>Оберіть тип</option>
+                            <option value="урядова">Урядова</option>
+                            <option value="міжнародна">Міжнародна</option>
+                            <option value="приватна">Приватна</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <div class="label">Контактна інформація</div>
+                        <input type="text" name="contactInfo" placeholder="contact@example.com" maxlength="200">
+                    </div>
+
+                    <div>
+                        <div class="label">Країна</div>
+                        <select name="countryId" required>
+                            <option value="" disabled selected>Оберіть країну</option>
+                            <option th:each="country : ${@countryService.getAllCountries()}"
+                                    th:value="${country.id}"
+                                    th:text="${country.name}">Country</option>
+                        </select>
+                    </div>
+
+                    <button type="submit">➕ Додати Донора</button>
+                </form>
+
+                <!-- Форма пошуку -->
+                <form method="get" action="/" style="margin-top: 20px; background: rgba(0,102,255,0.1);">
+                    <div>
+                        <div class="label">🔍 Пошук донора</div>
+                        <input type="text"
+                               name="searchDonor"
+                               placeholder="Введіть назву організації або тип..."
+                               th:value="${searchDonor}">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" style="flex: 1;">Шукати</button>
+                        <a th:href="@{/}" class="edit-btn" style="flex: 1; display: flex; align-items: center; justify-content: center; text-decoration: none;">Скинути</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Результати пошуку -->
+            <div>
+                <!-- Показуємо тільки якщо є пошук -->
+                <div th:if="${searchDonor != null and !searchDonor.isEmpty()}">
+                    <div style="padding: 10px; background: rgba(0,102,255,0.2); border-radius: 8px; margin-bottom: 15px;">
+                        <p style="color: #00ccff; margin: 0; font-weight: bold;">
+                            Результати пошуку: <span th:text="${donors.size()}">0</span> записів
+                        </p>
+                    </div>
+
+                    <!-- Список знайдених донорів -->
+                    <ul th:if="${!donors.isEmpty()}">
+                        <li th:each="donor : ${donors}">
+                            <div class="item-info">
+                                <div class="item-name" th:text="${donor.organizationName}">Pentagon</div>
+                                <div class="item-details">
+                                    Тип: <span th:text="${donor.organizationType}">урядова</span><br>
+                                    Країна: <span th:text="${donor.country.name}">USA</span><br>
+                                    <span th:if="${donor.contactInfo != null and !donor.contactInfo.isEmpty()}">
+                                        Контакт: <span th:text="${donor.contactInfo}">contact@example.com</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="item-actions" sec:authorize="hasAuthority('ADMIN')">
+                                <a th:href="@{/editDonor/{id}(id=${donor.id})}" class="edit-btn">Редагувати</a>
+                                <a th:href="@{/deleteDonor/{id}(id=${donor.id})}" class="delete-btn">Видалити</a>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <!-- Повідомлення про відсутність результатів -->
+                    <div th:if="${donors.isEmpty()}" style="padding: 15px; background: rgba(255,107,107,0.1); border-radius: 8px; text-align: center;">
+                        <p style="color: #ff6b6b; margin: 0;">
+                            ❌ Донорів не знайдено за запитом "<span th:text="${searchDonor}"></span>"
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Підказка коли немає пошуку -->
+                <div th:if="${searchDonor == null or searchDonor.isEmpty()}" style="padding: 20px; background: rgba(255,255,255,0.03); border-radius: 8px; text-align: center;">
+                    <p style="color: #bbb; margin: 0;">
+                        💡 Використовуйте пошук для відображення донорів
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ПОСТАВКИ ==================== -->
+    <div class="column">
+        <h2>📦 Поставки зброї</h2>
+
+        <div class="content-grid">
+            <!-- Форма додавання -->
+            <div>
+                <form th:action="@{/addDelivery}" method="post">
+                    <div>
+                        <div class="label">Зброя</div>
+                        <select name="weaponId" required>
+                            <option value="" disabled selected>Оберіть зброю</option>
+                            <option th:each="weapon : ${@weaponService.getAllWeapons()}"
+                                    th:value="${weapon.id}"
+                                    th:text="${weapon.weaponName + ' (' + weapon.weaponType + ')'}">Weapon</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <div class="label">Донор</div>
+                        <select name="donorId" required>
+                            <option value="" disabled selected>Оберіть донора</option>
+                            <option th:each="donor : ${@donorService.getAllDonors()}"
+                                    th:value="${donor.id}"
+                                    th:text="${donor.organizationName + ' (' + donor.country.name + ')'}">Donor</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <div class="label">Дата поставки</div>
+                        <input type="date" name="deliveryDate" required>
+                    </div>
+
+                    <div>
+                        <div class="label">Кількість одиниць</div>
+                        <input type="number" name="quantityDelivered" placeholder="50" required min="1">
+                    </div>
+
+                    <div>
+                        <div class="label">Статус</div>
+                        <select name="deliveryStatus" required>
+                            <option value="" disabled selected>Оберіть статус</option>
+                            <option value="planned">Заплановано</option>
+                            <option value="in_transit">У дорозі</option>
+                            <option value="delivered">Доставлено</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <div class="label">Номер відстеження</div>
+                        <input type="text" name="trackingNumber" placeholder="USA-001" maxlength="100">
+                    </div>
+
+                    <button type="submit">➕ Додати Поставку</button>
+                </form>
+
+                <!-- Форма пошуку -->
+                <form method="get" action="/" style="margin-top: 20px; background: rgba(0,102,255,0.1);">
+                    <div>
+                        <div class="label">🔍 Пошук поставки</div>
+                        <input type="text"
+                               name="searchDelivery"
+                               placeholder="Зброя, донор або статус..."
+                               th:value="${searchDelivery}">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" style="flex: 1;">Шукати</button>
+                        <a th:href="@{/}" class="edit-btn" style="flex: 1; display: flex; align-items: center; justify-content: center; text-decoration: none;">Скинути</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Результати пошуку -->
+            <div>
+                <!-- Показуємо тільки якщо є пошук -->
+                <div th:if="${searchDelivery != null and !searchDelivery.isEmpty()}">
+                    <div style="padding: 10px; background: rgba(0,102,255,0.2); border-radius: 8px; margin-bottom: 15px;">
+                        <p style="color: #00ccff; margin: 0; font-weight: bold;">
+                            Результати пошуку: <span th:text="${deliveries.size()}">0</span> записів
+                        </p>
+                    </div>
+
+                    <!-- Список знайдених поставок -->
+                    <ul th:if="${!deliveries.isEmpty()}">
+                        <li th:each="delivery : ${deliveries}">
+                            <div class="item-info">
+                                <div class="item-name">
+                                    <span th:text="${delivery.quantityDelivered}">50</span> од.
+                                    <span th:text="${delivery.weapon.weaponName}">M777</span>
+                                </div>
+                                <div class="item-details">
+                                    Донор: <span th:text="${delivery.donor.organizationName}">Pentagon</span><br>
+                                    Дата: <span th:text="${delivery.deliveryDate}">2022-03-15</span><br>
+                                    Статус:
+                                    <span th:if="${delivery.deliveryStatus == 'planned'}" style="color: #ffc107;">⏳ Заплановано</span>
+                                    <span th:if="${delivery.deliveryStatus == 'in_transit'}" style="color: #00ccff;">🚚 У дорозі</span>
+                                    <span th:if="${delivery.deliveryStatus == 'delivered'}" style="color: #90ee90;">✅ Доставлено</span>
+                                    <br>
+                                    <span th:if="${delivery.trackingNumber != null and !delivery.trackingNumber.isEmpty()}">
+                                        Трекінг: <span th:text="${delivery.trackingNumber}">USA-001</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="item-actions" sec:authorize="hasAuthority('ADMIN')">
+                                <a th:href="@{/editDelivery/{id}(id=${delivery.id})}" class="edit-btn">Редагувати</a>
+                                <a th:href="@{/deleteDelivery/{id}(id=${delivery.id})}" class="delete-btn">Видалити</a>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <!-- Повідомлення про відсутність результатів -->
+                    <div th:if="${deliveries.isEmpty()}" style="padding: 15px; background: rgba(255,107,107,0.1); border-radius: 8px; text-align: center;">
+                        <p style="color: #ff6b6b; margin: 0;">
+                            ❌ Поставок не знайдено за запитом "<span th:text="${searchDelivery}"></span>"
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Підказка коли немає пошуку -->
+                <div th:if="${searchDelivery == null or searchDelivery.isEmpty()}" style="padding: 20px; background: rgba(255,255,255,0.03); border-radius: 8px; text-align: center;">
+                    <p style="color: #bbb; margin: 0;">
+                        💡 Використовуйте пошук для відображення поставок
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+
 
 </body>
 </html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Сторінку не знайдено</title>
+    <link rel="stylesheet" th:href="@{/css/errors.css}">
+</head>
+<body>
+
+<div class="error-container">
+    <div class="error-box">
+        <div class="error-code error-404">404</div>
+        <h1>Упс! Сторінку не знайдено</h1>
+        <p>Вибачте, але сторінка, яку ви шукаєте, не існує або була переміщена.</p>
+        <p>Можливо, ви перейшли за застарілим посиланням або ввели неправильну адресу.</p>
+
+        <div class="actions">
+            <a href="/" class="btn btn-primary">🏠 На головну</a>
+            <a href="/viewAll" class="btn btn-secondary">📊 Перегляд даних</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
