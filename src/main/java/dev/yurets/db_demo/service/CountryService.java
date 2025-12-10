@@ -2,8 +2,7 @@ package dev.yurets.db_demo.service;
 
 import dev.yurets.db_demo.model.Country;
 import dev.yurets.db_demo.repository.CountryRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +14,10 @@ import java.util.Optional;
  * Сервіс для роботи з країнами-донорами
  * Прошарок між контролерами та репозиторієм
  */
+@Slf4j
 @Service
 @Transactional
 public class CountryService {
-
-    private static final Logger log = LoggerFactory.getLogger(CountryService.class);
 
     private final CountryRepository countryRepository;
 

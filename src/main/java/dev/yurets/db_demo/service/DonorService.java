@@ -4,8 +4,7 @@ import dev.yurets.db_demo.model.Country;
 import dev.yurets.db_demo.model.Donor;
 import dev.yurets.db_demo.repository.CountryRepository;
 import dev.yurets.db_demo.repository.DonorRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +14,10 @@ import java.util.Optional;
 /**
  * Сервіс для роботи з донорами
  */
+@Slf4j
 @Service
 @Transactional
 public class DonorService {
-
-    private static final Logger log = LoggerFactory.getLogger(DonorService.class);
 
     private final DonorRepository donorRepository;
     private final CountryRepository countryRepository;

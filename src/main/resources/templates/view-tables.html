@@ -189,7 +189,165 @@
         </table>
     </div>
 
+    <!-- ==================== КОРИСТУВАЧІ (ТІЛЬКИ ДЛЯ ADMIN) ==================== -->
+    <div class="column" sec:authorize="hasAuthority('ADMIN')">
+        <h2>👥 Користувачі системи</h2>
+        <div style="background: rgba(255, 193, 7, 0.1); padding: 10px; border-radius: 6px; margin-bottom: 15px; border-left: 3px solid #ffc107;">
+            <p style="color: #ffc107; margin: 0; font-size: 13px;">
+                ⚠️ <strong>Тільки для перегляду:</strong> Паролі зберігаються у вигляді BCrypt хешів для безпеки.
+            </p>
+        </div>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Логін (Username)</th>
+                <th>Роль</th>
+                <th>Пароль (BCrypt Hash)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}">1</td>
+                <td th:text="${user.username}">admin</td>
+                <td>
+                    <span th:if="${user.role == 'ADMIN'}" class="badge">ADMIN</span>
+                    <span th:if="${user.role == 'USER'}" class="badge user-badge">USER</span>
+                </td>
+                <td style="font-family: 'Courier New', monospace; font-size: 11px; color: #888; max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    <span th:text="${user.password}">$2a$10$...</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ==================== ЗАПИТИ НА ДОПОМОГУ ==================== -->
+    <div class="column">
+        <h2>📋 Запити на військову допомогу</h2>
+        <div style="background: rgba(0, 204, 255, 0.1); padding: 10px; border-radius: 6px; margin-bottom: 15px; border-left: 3px solid #00ccff;">
+            <p style="color: #00ccff; margin: 0; font-size: 13px;">
+                💡 <strong>Система запитів:</strong> Країни можуть створювати запити на зброю. Якщо країна-донор зачинена або період завершено - запити блокуються.
+            </p>
+        </div>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Зброя</th>
+                <th class="text-right">Кількість</th>
+                <th>Пріоритет</th>
+                <th>Від → До</th>
+                <th>Період</th>
+                <th>Дата</th>
+                <th>Статус</th>
+                <th sec:authorize="hasAuthority('ADMIN')">Дії</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="request : ${requests}">
+                <td th:text="${request.id}">1</td>
+                <td>
+                    <strong th:text="${request.weaponName}">M777 Howitzer</strong><br>
+                    <span style="font-size: 12px; color: #888;" th:text="${request.weaponType}">Artillery</span>
+                </td>
+                <td class="text-right" th:text="${request.requestedQuantity}">100</td>
+                <td>
+                    <span th:if="${request.priority == 'URGENT'}" style="color: #ff6b6b; font-weight: bold;">🔴 URGENT</span>
+                    <span th:if="${request.priority == 'HIGH'}" style="color: #ff9500; font-weight: bold;">🟠 HIGH</span>
+                    <span th:if="${request.priority == 'MEDIUM'}" style="color: #ffc107; font-weight: bold;">🟡 MEDIUM</span>
+                    <span th:if="${request.priority == 'LOW'}" style="color: #90ee90; font-weight: bold;">🟢 LOW</span>
+                </td>
+                <td>
+                    <span th:text="${request.requestingCountry.name}">Ukraine</span>
+                    →
+                    <span th:text="${request.donorCountry != null ? request.donorCountry.name : '(не призначено)'}">USA</span>
+                </td>
+                <td th:text="${request.period.periodName}">2024 Q1</td>
+                <td th:text="${request.requestDate}">2024-01-15</td>
+                <td>
+                    <span th:if="${request.status == 'PENDING'}" style="color: #ffc107;">⏳ Очікує</span>
+                    <span th:if="${request.status == 'APPROVED'}" style="color: #90ee90;">✅ Схвалено</span>
+                    <span th:if="${request.status == 'REJECTED'}" style="color: #ff6b6b;">❌ Відхилено</span>
+                    <span th:if="${request.status == 'DELIVERED'}" style="color: #00ccff;">📦 Доставлено</span>
+                </td>
+                <td class="table-actions" sec:authorize="hasAuthority('ADMIN')">
+                    <!-- Кнопки розташовані стовпцем -->
+                    <div style="display: flex; flex-direction: column; gap: 5px; min-width: 100px;">
+                        <!-- Схвалити (тільки для PENDING) -->
+                        <span th:if="${request.status == 'PENDING'}">
+                            <a th:href="@{/approveRequest/{id}(id=${request.id})}"
+                               class="edit-btn"
+                               style="background: rgba(144, 238, 144, 0.2); border-color: rgba(144, 238, 144, 0.3); color: #90ee90; text-align: center; display: block;"
+                               onclick="return confirm('Схвалити цей запит?')">✅ Схвалити</a>
+                        </span>
+
+                        <!-- Відхилити (тільки для PENDING) -->
+                        <span th:if="${request.status == 'PENDING'}">
+                            <a href="javascript:void(0)"
+                               class="delete-btn"
+                               style="text-align: center; display: block;"
+                               th:onclick="'showRejectModal(' + ${request.id} + ')'">❌ Відхилити</a>
+                        </span>
+
+                        <!-- Видалити (для всіх крім DELIVERED) -->
+                        <span th:if="${request.status != 'DELIVERED'}">
+                            <a th:href="@{/deleteRequest/{id}(id=${request.id})}"
+                               class="delete-btn"
+                               style="text-align: center; display: block;"
+                               onclick="return confirm('Видалити цей запит?')">🗑️ Видалити</a>
+                        </span>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
 </div>
+
+</div>
+
+<!-- Модальне вікно для відхилення запиту -->
+<div id="rejectModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: #1f2335; border-radius: 10px; padding: 30px; max-width: 500px; width: 90%; border: 1px solid rgba(255,255,255,0.1);">
+        <h2 style="color: #ff6b6b; margin-top: 0;">❌ Відхилити запит</h2>
+        <form id="rejectForm" method="post">
+            <div style="margin-bottom: 20px;">
+                <label style="color: #90ee90; display: block; margin-bottom: 10px;">Причина відхилення:</label>
+                <textarea name="rejectionReason"
+                          required
+                          rows="4"
+                          style="width: 100%; padding: 10px; border: 1px solid #444; border-radius: 5px; background: rgba(255,255,255,0.1); color: #e0e0e0; font-size: 14px; font-family: inherit;"
+                          placeholder="Вкажіть причину відхилення запиту..."></textarea>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" style="flex: 1; background: linear-gradient(135deg, #ff6b6b, #ff9500);">Відхилити</button>
+                <button type="button" onclick="closeRejectModal()" style="flex: 1; background: rgba(255,255,255,0.1);">Скасувати</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function showRejectModal(requestId) {
+        const modal = document.getElementById('rejectModal');
+        const form = document.getElementById('rejectForm');
+        form.action = '/rejectRequest/' + requestId;
+        modal.style.display = 'flex';
+    }
+
+    function closeRejectModal() {
+        document.getElementById('rejectModal').style.display = 'none';
+    }
+
+    // Закриття модалки при кліку поза нею
+    document.getElementById('rejectModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeRejectModal();
+        }
+    });
+</script>
 
 <!-- ==================== REST API ІНФОРМАЦІЯ ==================== -->
 <div class="api-info" sec:authorize="hasAuthority('ADMIN')">

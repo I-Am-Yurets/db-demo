@@ -1,6 +1,8 @@
 package dev.yurets.db_demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -14,20 +16,38 @@ import java.util.Set;
 @Table(name = "countries")
 public class Country {
 
+    @Getter
+    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Getter
+    @Setter
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Getter
+    @Setter
     @Column(name = "total_aid_usd")
     private BigDecimal totalAidUsd;
 
+    @Column(name = "is_open")
+    private Boolean isOpen = true;
+
+    public boolean isOpen() {
+        return isOpen;
+    }
+
+    public void setOpen(boolean open) {
+        isOpen = open;
+    }
     /**
      * Зв'язок "Один-до-Багатьох" з періодами
      * @JsonIgnore - запобігає циклічній серіалізації JSON
      */
+    @Getter
+    @Setter
     @OneToMany(mappedBy = "country", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Period> periods;
@@ -44,38 +64,6 @@ public class Country {
 
     // --- Getters and Setters ---
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getTotalAidUsd() {
-        return totalAidUsd;
-    }
-
-    public void setTotalAidUsd(BigDecimal totalAidUsd) {
-        this.totalAidUsd = totalAidUsd;
-    }
-
-    public Set<Period> getPeriods() {
-        return periods;
-    }
-
-    public void setPeriods(Set<Period> periods) {
-        this.periods = periods;
-    }
-
     @Override
     public String toString() {
         return "Country{" +
@@ -84,4 +72,6 @@ public class Country {
                 ", totalAidUsd=" + totalAidUsd +
                 '}';
     }
+
+
 }

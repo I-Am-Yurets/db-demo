@@ -6,8 +6,7 @@ import dev.yurets.db_demo.model.WeaponDelivery;
 import dev.yurets.db_demo.repository.DonorRepository;
 import dev.yurets.db_demo.repository.WeaponDeliveryRepository;
 import dev.yurets.db_demo.repository.WeaponRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,11 +17,10 @@ import java.util.Optional;
 /**
  * Сервіс для роботи з поставками зброї
  */
+@Slf4j
 @Service
 @Transactional
 public class WeaponDeliveryService {
-
-    private static final Logger log = LoggerFactory.getLogger(WeaponDeliveryService.class);
 
     private final WeaponDeliveryRepository deliveryRepository;
     private final WeaponRepository weaponRepository;

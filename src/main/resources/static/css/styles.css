@@ -225,7 +225,8 @@ li:hover {
 
 .item-actions {
     display: flex;
-    gap: 8px;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .edit-btn {

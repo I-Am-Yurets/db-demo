@@ -2,8 +2,7 @@ package dev.yurets.db_demo.controller;
 
 import dev.yurets.db_demo.model.Country;
 import dev.yurets.db_demo.service.CountryService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,10 +18,9 @@ import java.math.BigDecimal;
  * Контролер для роботи з країнами-донорами
  * Обробляє всі CRUD операції: CREATE, READ, UPDATE, DELETE
  */
+@Slf4j
 @Controller
 public class CountryController {
-
-    private static final Logger log = LoggerFactory.getLogger(CountryController.class);
 
     private final CountryService countryService;
 

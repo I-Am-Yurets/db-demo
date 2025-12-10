@@ -4,8 +4,7 @@ import dev.yurets.db_demo.model.WeaponDelivery;
 import dev.yurets.db_demo.service.DonorService;
 import dev.yurets.db_demo.service.WeaponDeliveryService;
 import dev.yurets.db_demo.service.WeaponService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -21,10 +20,10 @@ import java.time.LocalDate;
 /**
  * Контролер для роботи з поставками зброї
  */
+@Slf4j
 @Controller
 public class WeaponDeliveryController {
 
-    private static final Logger log = LoggerFactory.getLogger(WeaponDeliveryController.class);
 
     private final WeaponDeliveryService deliveryService;
     private final WeaponService weaponService;

@@ -1,17 +1,19 @@
 package dev.yurets.db_demo.controller;
 
+import dev.yurets.db_demo.model.AidRequest;
 import dev.yurets.db_demo.model.Country;
 import dev.yurets.db_demo.model.Donor;
 import dev.yurets.db_demo.model.Period;
 import dev.yurets.db_demo.model.Weapon;
 import dev.yurets.db_demo.model.WeaponDelivery;
+import dev.yurets.db_demo.service.AidRequestService;
 import dev.yurets.db_demo.service.CountryService;
 import dev.yurets.db_demo.service.DonorService;
 import dev.yurets.db_demo.service.PeriodService;
 import dev.yurets.db_demo.service.WeaponDeliveryService;
 import dev.yurets.db_demo.service.WeaponService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import dev.yurets.db_demo.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,27 +27,32 @@ import java.util.stream.Collectors;
  * Головний контролер
  * Відповідає за відображення головної сторінки з усіма даними
  */
+@Slf4j
 @Controller
 public class MainController {
-
-    private static final Logger log = LoggerFactory.getLogger(MainController.class);
 
     private final CountryService countryService;
     private final PeriodService periodService;
     private final WeaponService weaponService;
     private final DonorService donorService;
     private final WeaponDeliveryService deliveryService;
+    private final UserRepository userRepository;
+    private final AidRequestService requestService;
 
     public MainController(CountryService countryService,
                           PeriodService periodService,
                           WeaponService weaponService,
                           DonorService donorService,
-                          WeaponDeliveryService deliveryService) {
+                          WeaponDeliveryService deliveryService,
+                          UserRepository userRepository,
+                          AidRequestService requestService) {
         this.countryService = countryService;
         this.periodService = periodService;
         this.weaponService = weaponService;
         this.donorService = donorService;
         this.deliveryService = deliveryService;
+        this.userRepository = userRepository;
+        this.requestService = requestService;
     }
 
     /**
@@ -62,6 +69,7 @@ public class MainController {
                         @RequestParam(required = false) String searchWeapon,
                         @RequestParam(required = false) String searchDonor,
                         @RequestParam(required = false) String searchDelivery,
+                        @RequestParam(required = false) String searchRequest,
                         Model model) {
 
         log.info("[WEB] Завантаження головної сторінки (CRUD) - доступ ADMIN");
@@ -72,6 +80,7 @@ public class MainController {
         List<Weapon> weapons = weaponService.getAllWeapons();
         List<Donor> donors = donorService.getAllDonors();
         List<WeaponDelivery> deliveries = deliveryService.getAllDeliveries();
+        List<AidRequest> requests = requestService.getAllRequests();
 
         // Пошук країн
         if (searchCountry != null && !searchCountry.trim().isEmpty()) {
@@ -123,11 +132,26 @@ public class MainController {
             model.addAttribute("searchDelivery", searchDelivery);
         }
 
+        // Пошук запитів (НОВИЙ)
+        if (searchRequest != null && !searchRequest.trim().isEmpty()) {
+            String query = searchRequest.toLowerCase().trim();
+            requests = requests.stream()
+                    .filter(r -> r.getWeaponName().toLowerCase().contains(query) ||
+                            r.getWeaponType().toLowerCase().contains(query) ||
+                            r.getRequestingCountry().getName().toLowerCase().contains(query) ||
+                            (r.getDonorCountry() != null && r.getDonorCountry().getName().toLowerCase().contains(query)) ||
+                            r.getStatus().toLowerCase().contains(query) ||
+                            r.getPriority().toLowerCase().contains(query))
+                    .collect(Collectors.toList());
+            model.addAttribute("searchRequest", searchRequest);
+        }
+
         model.addAttribute("countries", countries);
         model.addAttribute("periods", periods);
         model.addAttribute("weapons", weapons);
         model.addAttribute("donors", donors);
         model.addAttribute("deliveries", deliveries);
+        model.addAttribute("requests", requests);
 
         return "webpage";
     }
@@ -148,6 +172,8 @@ public class MainController {
         model.addAttribute("weapons", weaponService.getAllWeapons());
         model.addAttribute("donors", donorService.getAllDonors());
         model.addAttribute("deliveries", deliveryService.getAllDeliveries());
+        model.addAttribute("users", userRepository.findAll());
+        model.addAttribute("requests", requestService.getAllRequests());
 
         return "view-tables";
     }

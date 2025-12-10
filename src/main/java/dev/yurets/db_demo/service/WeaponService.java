@@ -4,8 +4,7 @@ import dev.yurets.db_demo.model.Period;
 import dev.yurets.db_demo.model.Weapon;
 import dev.yurets.db_demo.repository.PeriodRepository;
 import dev.yurets.db_demo.repository.WeaponRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +16,10 @@ import java.util.Optional;
  * Сервіс для роботи зі зброєю
  * Прошарок між контролерами та репозиторієм
  */
+@Slf4j
 @Service
 @Transactional
 public class WeaponService {
-
-    private static final Logger log = LoggerFactory.getLogger(WeaponService.class);
 
     private final WeaponRepository weaponRepository;
     private final PeriodRepository periodRepository;

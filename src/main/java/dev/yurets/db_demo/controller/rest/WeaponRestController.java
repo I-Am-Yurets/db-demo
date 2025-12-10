@@ -2,8 +2,7 @@ package dev.yurets.db_demo.controller.rest;
 
 import dev.yurets.db_demo.model.Weapon;
 import dev.yurets.db_demo.service.WeaponService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,11 +20,10 @@ import java.util.List;
  * PUT    /api/weapons/{id}  - Оновити зброю (тільки ADMIN)
  * DELETE /api/weapons/{id}  - Видалити зброю (тільки ADMIN)
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/weapons")
 public class WeaponRestController {
-
-    private static final Logger log = LoggerFactory.getLogger(WeaponRestController.class);
 
     private final WeaponService weaponService;
 

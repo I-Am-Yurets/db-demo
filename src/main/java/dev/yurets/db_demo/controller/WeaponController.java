@@ -3,8 +3,7 @@ package dev.yurets.db_demo.controller;
 import dev.yurets.db_demo.model.Weapon;
 import dev.yurets.db_demo.service.PeriodService;
 import dev.yurets.db_demo.service.WeaponService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,10 +19,9 @@ import java.math.BigDecimal;
  * Контролер для роботи зі зброєю
  * Обробляє всі CRUD операції: CREATE, READ, UPDATE, DELETE
  */
+@Slf4j
 @Controller
 public class WeaponController {
-
-    private static final Logger log = LoggerFactory.getLogger(WeaponController.class);
 
     private final WeaponService weaponService;
     private final PeriodService periodService;

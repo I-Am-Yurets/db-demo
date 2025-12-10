@@ -4,8 +4,7 @@ import dev.yurets.db_demo.model.Country;
 import dev.yurets.db_demo.model.Period;
 import dev.yurets.db_demo.repository.CountryRepository;
 import dev.yurets.db_demo.repository.PeriodRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,11 +17,10 @@ import java.util.Optional;
  * Сервіс для роботи з періодами допомоги
  * Прошарок між контролерами та репозиторієм
  */
+@Slf4j
 @Service
 @Transactional
 public class PeriodService {
-
-    private static final Logger log = LoggerFactory.getLogger(PeriodService.class);
 
     private final PeriodRepository periodRepository;
     private final CountryRepository countryRepository;

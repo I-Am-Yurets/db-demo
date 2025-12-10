@@ -3,8 +3,7 @@ package dev.yurets.db_demo.controller;
 import dev.yurets.db_demo.model.Period;
 import dev.yurets.db_demo.service.CountryService;
 import dev.yurets.db_demo.service.PeriodService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -22,10 +21,9 @@ import java.time.LocalDate;
  * Контролер для роботи з періодами допомоги
  * Обробляє всі CRUD операції: CREATE, READ, UPDATE, DELETE
  */
+@Slf4j
 @Controller
 public class PeriodController {
-
-    private static final Logger log = LoggerFactory.getLogger(PeriodController.class);
 
     private final PeriodService periodService;
     private final CountryService countryService;

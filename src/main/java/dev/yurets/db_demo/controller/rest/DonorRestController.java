@@ -2,8 +2,7 @@ package dev.yurets.db_demo.controller.rest;
 
 import dev.yurets.db_demo.model.Donor;
 import dev.yurets.db_demo.service.DonorService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +13,10 @@ import java.util.List;
 /**
  * REST API контролер для роботи з донорами
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/donors")
 public class DonorRestController {
-
-    private static final Logger log = LoggerFactory.getLogger(DonorRestController.class);
 
     private final DonorService donorService;
 
