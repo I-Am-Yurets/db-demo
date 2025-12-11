@@ -49,7 +49,7 @@ psql -U postgres -d military_aid_db -f aid_requests_migration.sql
 ./mvnw spring-boot:run
 ```
 
-### 4. Відкрий у браузері
+### 4. Відкрийте у браузері
 - **Веб-інтерфейс:** http://localhost:8080
 - **Перегляд даних:** http://localhost:8080/viewAll
 - **REST API:** http://localhost:8080/api
