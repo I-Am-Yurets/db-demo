@@ -259,4 +259,4 @@ psql -U postgres -d military_aid_db -f aid_requests_migration.sql
 
 **🎉 Готово до використання!**
 
-Запусти `./mvnw spring-boot:run` та відкрий http://localhost:8080
+Запустіть `./mvnw spring-boot:run` та відкрийте http://localhost:8080
