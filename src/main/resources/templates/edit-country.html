@@ -22,8 +22,31 @@
 
             <div>
                 <div class="label">Загальна допомога (USD)</div>
-                <input type="number" name="totalAidUsd" th:value="${#numbers.formatDecimal(country.totalAidUsd, 0, 'NONE', 0, 'NONE')}" required>
+                <input type="number" name="totalAidUsd"
+                       th:value="${#numbers.formatDecimal(country.totalAidUsd, 0, 'NONE', 0, 'NONE')}"
+                       required>
             </div>
+
+            <!-- ⬇️⬇️⬇️ НОВИЙ БЛОК ⬇️⬇️⬇️ -->
+            <div>
+                <div class="label">Статус країни</div>
+                <select name="isOpen" required>
+                    <option value="true" th:selected="${country.isOpen()}">
+                        ✅ Відкрита (приймає запити)
+                    </option>
+                    <option value="false" th:selected="${!country.isOpen()}">
+                        🔴 Зачинена (не приймає запити)
+                    </option>
+                </select>
+
+                <!-- Підказка про вплив статусу -->
+                <div style="margin-top: 10px; padding: 10px; background: rgba(255, 193, 7, 0.1); border-radius: 6px; border-left: 3px solid #ffc107;">
+                    <p style="color: #ffc107; margin: 0; font-size: 12px;">
+                        ⚠️ <strong>Увага:</strong> Якщо країна зачинена, вона не зможе приймати нові запити на допомогу як донор.
+                    </p>
+                </div>
+            </div>
+            <!-- ⬆️⬆️⬆️ КІНЕЦЬ НОВОГО БЛОКУ ⬆️⬆️⬆️ -->
 
             <div style="display: flex; gap: 10px; margin-top: 10px;">
                 <button type="submit" style="flex: 1;">Зберегти зміни</button>

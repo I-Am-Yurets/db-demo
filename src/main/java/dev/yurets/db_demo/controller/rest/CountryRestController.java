@@ -68,9 +68,10 @@ public class CountryRestController {
         log.info("[REST API] POST /api/countries - Створення країни: {}", country.getName());
 
         try {
-            countryService.createCountry(country.getName(), country.getTotalAidUsd());
+            // Встановлюємо статус (якщо не вказано - за замовчуванням TRUE)
+            // Просто використовуємо значення напряму
+            countryService.createCountry(country.getName(), country.getTotalAidUsd(), country.isOpen());
 
-            // Повертаємо створену країну
             Country created = countryService.getAllCountries().stream()
                     .filter(c -> c.getName().equals(country.getName()))
                     .findFirst()
@@ -86,11 +87,6 @@ public class CountryRestController {
         }
     }
 
-    /**
-     * PUT /api/countries/{id}
-     * Оновити існуючу країну
-     * Доступ: тільки ADMIN
-     */
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Country> updateCountry(
@@ -100,7 +96,8 @@ public class CountryRestController {
         log.info("[REST API] PUT /api/countries/{} - Оновлення країни", id);
 
         try {
-            countryService.updateCountry(id, country.getName(), country.getTotalAidUsd());
+            // Просто використовуємо значення напряму
+            countryService.createCountry(country.getName(), country.getTotalAidUsd(), country.isOpen());
 
             return countryService.getCountryById(id)
                     .map(ResponseEntity::ok)

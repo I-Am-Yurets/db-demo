@@ -42,7 +42,7 @@ public class CountryService {
     /**
      * Створити нову країну з валідацією
      */
-    public void createCountry(String name, BigDecimal totalAidUsd) {
+    public void createCountry(String name, BigDecimal totalAidUsd, Boolean isOpen) {  // ⬅️ ДОДАЛИ isOpen
         // Валідація назви
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Назва країни не може бути порожньою");
@@ -65,17 +65,19 @@ public class CountryService {
             throw new IllegalArgumentException("Сума допомоги занадто велика");
         }
 
+        // Створення країни
         Country country = new Country(name.trim(), totalAidUsd);
+        country.setOpen(isOpen != null ? isOpen : true);  // ⬅️ ВСТАНОВЛЮЄМО СТАТУС
         Country saved = countryRepository.save(country);
 
-        log.info("Створено країну: {} (ID: {})", saved.getName(), saved.getId());
-
+        log.info("Створено країну: {} (ID: {}, Статус: {})",
+                saved.getName(), saved.getId(), saved.isOpen() ? "відкрита" : "зачинена");
     }
 
     /**
      * Оновити існуючу країну з валідацією
      */
-    public void updateCountry(Long id, String name, BigDecimal totalAidUsd) {
+    public void updateCountry(Long id, String name, BigDecimal totalAidUsd, Boolean isOpen) {  // ⬅️ ДОДАЛИ isOpen
         Country country = countryRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Країну з ID " + id + " не знайдено!"));
@@ -102,13 +104,15 @@ public class CountryService {
             throw new IllegalArgumentException("Сума допомоги занадто велика");
         }
 
+        // Оновлення полів
         country.setName(name.trim());
         country.setTotalAidUsd(totalAidUsd);
+        country.setOpen(isOpen != null ? isOpen : true);  // ⬅️ ОНОВЛЮЄМО СТАТУС
 
         Country updated = countryRepository.save(country);
 
-        log.info("Оновлено країну: {} (ID: {})", updated.getName(), updated.getId());
-
+        log.info("Оновлено країну: {} (ID: {}, Статус: {})",
+                updated.getName(), updated.getId(), updated.isOpen() ? "відкрита" : "зачинена");
     }
 
     /**

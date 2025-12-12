@@ -38,8 +38,8 @@
             <tr>
                 <th>ID</th>
                 <th>Назва країни</th>
+                <th>Статус</th>  <!-- ⬅️⬅️⬅️ НОВА КОЛОНКА -->
                 <th class="text-right">Загальна допомога (USD)</th>
-                <!-- Колонка "Дії" тільки для ADMIN -->
                 <th sec:authorize="hasAuthority('ADMIN')">Дії</th>
             </tr>
             </thead>
@@ -47,7 +47,24 @@
             <tr th:each="country : ${countries}">
                 <td th:text="${country.id}">1</td>
                 <td th:text="${country.name}">USA</td>
-                <td class="text-right" th:text="${#numbers.formatDecimal(country.totalAidUsd, 0, 'COMMA', 0, 'POINT')}">75,000,000,000</td>
+
+                <!-- ⬇️⬇️⬇️ НОВА КОЛОНКА СТАТУСУ ⬇️⬇️⬇️ -->
+                <td>
+                <span th:if="${country.isOpen()}"
+                      style="color: #90ee90; font-weight: bold;">
+                    ✅ Відкрита
+                </span>
+                    <span th:if="${!country.isOpen()}"
+                          style="color: #ff6b6b; font-weight: bold;">
+                    🔴 Зачинена
+                </span>
+                </td>
+                <!-- ⬆️⬆️⬆️ -->
+
+                <td class="text-right"
+                    th:text="${#numbers.formatDecimal(country.totalAidUsd, 0, 'COMMA', 0, 'POINT')}">
+                    75,000,000,000
+                </td>
                 <td class="table-actions" sec:authorize="hasAuthority('ADMIN')">
                     <a th:href="@{/editCountry/{id}(id=${country.id})}" class="edit-btn">Edit</a>
                     <a th:href="@{/deleteCountry/{id}(id=${country.id})}" class="delete-btn">Delete</a>

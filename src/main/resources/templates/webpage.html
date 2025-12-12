@@ -51,10 +51,21 @@
                                th:value="${oldAid != null ? #numbers.formatDecimal(oldAid, 0, 'NONE', 0, 'NONE') : ''}"
                                placeholder="75000000000" required min="0" step="0.01">
                     </div>
+
+                    <!-- ⬇️⬇️⬇️ НОВИЙ БЛОК ⬇️⬇️⬇️ -->
+                    <div>
+                        <div class="label">Статус країни</div>
+                        <select name="isOpen" required>
+                            <option value="true" selected>✅ Відкрита (приймає запити)</option>
+                            <option value="false">🔴 Зачинена (не приймає запити)</option>
+                        </select>
+                    </div>
+                    <!-- ⬆️⬆️⬆️ КІНЕЦЬ НОВОГО БЛОКУ ⬆️⬆️⬆️ -->
+
                     <button type="submit">➕ Додати Країну</button>
                 </form>
 
-                <!-- Форма пошуку -->
+                <!-- Форма пошуку залишається без змін -->
                 <form method="get" action="/" style="margin-top: 20px; background: rgba(0,102,255,0.1);">
                     <div>
                         <div class="label">🔍 Пошук країни</div>
@@ -70,9 +81,8 @@
                 </form>
             </div>
 
-            <!-- Результати пошуку -->
+            <!-- Результати пошуку - додаємо відображення статусу -->
             <div>
-                <!-- Показуємо тільки якщо є пошук -->
                 <div th:if="${searchCountry != null and !searchCountry.isEmpty()}">
                     <div style="padding: 10px; background: rgba(0,102,255,0.2); border-radius: 8px; margin-bottom: 15px;">
                         <p style="color: #00ccff; margin: 0; font-weight: bold;">
@@ -84,9 +94,19 @@
                     <ul th:if="${!countries.isEmpty()}">
                         <li th:each="country : ${countries}">
                             <div class="item-info">
-                                <div class="item-name" th:text="${country.name}">USA</div>
+                                <div class="item-name">
+                                    <span th:text="${country.name}">USA</span>
+                                    <!-- ⬇️⬇️⬇️ ДОДАЄМО ЗНАЧОК СТАТУСУ ⬇️⬇️⬇️ -->
+                                    <span th:if="${country.isOpen()}" style="color: #90ee90; font-size: 14px;">✅</span>
+                                    <span th:if="${!country.isOpen()}" style="color: #ff6b6b; font-size: 14px;">🔴</span>
+                                    <!-- ⬆️⬆️⬆️ -->
+                                </div>
                                 <div class="item-details">
-                                    Допомога: $<span th:text="${#numbers.formatDecimal(country.totalAidUsd, 0, 'COMMA', 0, 'POINT')}">75,000,000,000</span>
+                                    Допомога: $<span th:text="${#numbers.formatDecimal(country.totalAidUsd, 0, 'COMMA', 0, 'POINT')}">75,000,000,000</span><br>
+                                    <!-- ⬇️⬇️⬇️ ДОДАЄМО ТЕКСТ СТАТУСУ ⬇️⬇️⬇️ -->
+                                    <span th:if="${country.isOpen()}" style="color: #90ee90;">Статус: Відкрита</span>
+                                    <span th:if="${!country.isOpen()}" style="color: #ff6b6b;">Статус: Зачинена</span>
+                                    <!-- ⬆️⬆️⬆️ -->
                                 </div>
                             </div>
                             <div class="item-actions">
@@ -96,7 +116,6 @@
                         </li>
                     </ul>
 
-                    <!-- Повідомлення про відсутність результатів -->
                     <div th:if="${countries.isEmpty()}" style="padding: 15px; background: rgba(255,107,107,0.1); border-radius: 8px; text-align: center;">
                         <p style="color: #ff6b6b; margin: 0;">
                             ❌ Країн не знайдено за запитом "<span th:text="${searchCountry}"></span>"
@@ -104,7 +123,6 @@
                     </div>
                 </div>
 
-                <!-- Підказка коли немає пошуку -->
                 <div th:if="${searchCountry == null or searchCountry.isEmpty()}" style="padding: 20px; background: rgba(255,255,255,0.03); border-radius: 8px; text-align: center;">
                     <p style="color: #bbb; margin: 0;">
                         💡 Використовуйте пошук для відображення країн

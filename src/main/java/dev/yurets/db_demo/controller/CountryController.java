@@ -35,9 +35,10 @@ public class CountryController {
     @PostMapping("/addCountry")
     public String addCountry(@RequestParam String name,
                              @RequestParam BigDecimal totalAidUsd,
+                             @RequestParam(defaultValue = "true") Boolean isOpen,  // ⬅️ НОВИЙ ПАРАМЕТР
                              RedirectAttributes redirectAttributes) {
         try {
-            countryService.createCountry(name, totalAidUsd);
+            countryService.createCountry(name, totalAidUsd, isOpen);  // ⬅️ ПЕРЕДАЄМО isOpen
             redirectAttributes.addFlashAttribute("message", "Країна '" + name + "' успішно додана!");
         } catch (IllegalArgumentException e) {
             log.error("Помилка валідації при додаванні країни: {}", e.getMessage());
@@ -79,9 +80,10 @@ public class CountryController {
     public String updateCountry(@RequestParam Long id,
                                 @RequestParam String name,
                                 @RequestParam BigDecimal totalAidUsd,
+                                @RequestParam(defaultValue = "true") Boolean isOpen,  // ⬅️ НОВИЙ ПАРАМЕТР
                                 RedirectAttributes redirectAttributes) {
         try {
-            countryService.updateCountry(id, name, totalAidUsd);
+            countryService.updateCountry(id, name, totalAidUsd, isOpen);  // ⬅️ ПЕРЕДАЄМО isOpen
             redirectAttributes.addFlashAttribute("message", "Країну успішно оновлено!");
             return "redirect:/";
         } catch (IllegalArgumentException e) {
